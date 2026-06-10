@@ -333,53 +333,62 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <!-- ADMIN -->
 <div id="s-admin" class="screen">
-  <div class="admin-box">
-    <div id="admin-login-area">
-      <div class="admin-title">管理員入口</div>
-      <div class="form-group"><label>管理密碼</label>
-        <input type="password" id="admin-pwd" placeholder="請輸入密碼" style="width:100%;padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px">
+  <div style="min-height:100vh;background:#0f172a;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px">
+    <div style="background:#1e293b;border:2px solid #00c4a7;border-radius:16px;padding:28px;width:100%;max-width:480px">
+      <div id="admin-login-area">
+        <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:18px">管理員入口</div>
+        <label style="font-size:13px;color:#94a3b8;display:block;margin-bottom:6px">管理密碼</label>
+        <input type="password" id="admin-pwd" placeholder="請輸入密碼"
+          style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #00c4a7;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px">
+        <button onclick="adminLogin()"
+          style="width:100%;padding:10px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">登入</button>
+        <div id="admin-login-err" style="display:none;margin-top:10px;color:#f87171;font-size:13px;background:rgba(239,68,68,.1);padding:8px 12px;border-radius:6px"></div>
       </div>
-      <button class="btn-admin" style="width:100%;margin-top:12px" onclick="adminLogin()">登入</button>
-      <div id="admin-login-err" class="admin-result err"></div>
-    </div>
-    <div id="admin-panel" style="display:none">
-      <div class="admin-title">測驗管理</div>
-      <div class="admin-section">
-        <h4>設定施測班級</h4>
-        <div id="current-active-class" style="font-size:13px;color:var(--muted);margin-bottom:10px"></div>
-        <div class="admin-row">
-          <select id="admin-active-cls">
-            <option value="">關閉施測（學生無法進入）</option>
+      <div id="admin-panel" style="display:none">
+        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:16px">測驗管理</div>
+
+        <!-- 設定施測班級 -->
+        <div style="margin-bottom:20px;padding:16px;background:#0f172a;border-radius:10px">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:10px;font-weight:600">設定施測班級</div>
+          <div id="current-active-class" style="font-size:13px;color:#00c4a7;margin-bottom:10px"></div>
+          <div style="display:flex;gap:8px">
+            <select id="admin-active-cls" style="flex:1;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
+              <option value="">關閉施測（學生無法進入）</option>
+              <option>高一忠</option><option>高一孝</option>
+              <option>高一仁</option><option>高一愛</option>
+            </select>
+            <button onclick="adminSetClass()" style="padding:9px 16px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap">套用</button>
+          </div>
+          <div id="admin-setclass-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
+        </div>
+
+        <!-- 解鎖學生 -->
+        <div style="margin-bottom:20px;padding:16px;background:#0f172a;border-radius:10px">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:10px;font-weight:600">解鎖學生</div>
+          <div style="display:flex;gap:8px">
+            <select id="admin-cls" style="flex:1;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
+              <option value="">選班級</option>
+              <option>高一忠</option><option>高一孝</option>
+              <option>高一仁</option><option>高一愛</option>
+            </select>
+            <input type="text" id="admin-seat" placeholder="座號"
+              style="width:80px;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
+            <button onclick="adminUnlock()" style="padding:9px 14px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">解鎖</button>
+          </div>
+          <div id="admin-unlock-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
+        </div>
+
+        <!-- 填答狀態 -->
+        <div style="padding:16px;background:#0f172a;border-radius:10px">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:10px;font-weight:600">班級填答狀態</div>
+          <select id="admin-status-cls" onchange="adminLoadStatus()"
+            style="width:100%;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
+            <option value="">選班級查看</option>
             <option>高一忠</option><option>高一孝</option>
             <option>高一仁</option><option>高一愛</option>
           </select>
-          <button class="btn-admin" onclick="adminSetClass()">套用</button>
+          <div id="admin-status-res" style="margin-top:10px;max-height:300px;overflow-y:auto"></div>
         </div>
-        <div id="admin-setclass-res" class="admin-result"></div>
-      </div>
-      <div class="admin-section">
-        <h4>解鎖學生（清除填答紀錄，讓學生可重新作答）</h4>
-        <div class="admin-row">
-          <select id="admin-cls">
-            <option value="">選班級</option>
-            <option>高一忠</option><option>高一孝</option>
-            <option>高一仁</option><option>高一愛</option>
-          </select>
-          <input type="text" id="admin-seat" placeholder="座號">
-          <button class="btn-admin danger" onclick="adminUnlock()">解鎖</button>
-        </div>
-        <div id="admin-unlock-res" class="admin-result"></div>
-      </div>
-      <div class="admin-section">
-        <h4>班級填答狀態</h4>
-        <div class="admin-row">
-          <select id="admin-status-cls" onchange="adminLoadStatus()">
-            <option value="">選班級</option>
-            <option>高一忠</option><option>高一孝</option>
-            <option>高一仁</option><option>高一愛</option>
-          </select>
-        </div>
-        <div id="admin-status-res" class="status-list"></div>
       </div>
     </div>
   </div>
@@ -1365,14 +1374,14 @@ function adminLogin(){
         _adminPwd=pwd;
         document.getElementById('admin-login-area').style.display='none';
         document.getElementById('admin-panel').style.display='block';
-        // 顯示目前施測班級
         fetch(SHEET_URL+'?action=getActiveClass')
           .then(r=>r.json())
           .then(d=>{
             const el=document.getElementById('current-active-class');
-            el.textContent=d.activeClass?`目前開放施測：${d.activeClass}`:'目前：未開放施測';
+            el.textContent=d.activeClass?`目前開放：${d.activeClass}`:'目前：未開放施測';
           }).catch(()=>{});
       }else{
+        const errEl=document.getElementById('admin-login-err');
         errEl.textContent='密碼錯誤';errEl.style.display='block';
       }
     })
@@ -1386,48 +1395,49 @@ function adminSetClass(){
     .then(r=>r.json())
     .then(data=>{
       if(data.success){
-        res.textContent=cls?`已開放 ${cls} 施測`:'已關閉施測，學生無法進入';
-        res.className='admin-result ok';res.style.display='block';
-        document.getElementById('current-active-class').textContent=
-          cls?`目前開放施測：${cls}`:'目前：未開放施測';
+        res.textContent=cls?`已開放 ${cls} 施測`:'已關閉施測';
+        res.style.cssText='display:block;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px;background:rgba(0,196,167,.15);color:#00c4a7';
+        document.getElementById('current-active-class').textContent=cls?`目前開放：${cls}`:'目前：未開放施測';
       }else{
-        res.textContent=data.msg;res.className='admin-result err';res.style.display='block';
+        res.textContent=data.msg;
+        res.style.cssText='display:block;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px;background:rgba(239,68,68,.1);color:#f87171';
       }
     })
-    .catch(()=>{res.textContent='連線失敗';res.className='admin-result err';res.style.display='block';});
+    .catch(()=>{res.textContent='連線失敗';res.style.cssText='display:block;color:#f87171';});
 }
 
 function adminUnlock(){
   const cls=document.getElementById('admin-cls').value;
   const seat=document.getElementById('admin-seat').value.trim();
   const res=document.getElementById('admin-unlock-res');
-  if(!cls||!seat){res.textContent='請選擇班級並填入座號';res.className='admin-result err';res.style.display='block';return;}
+  if(!cls||!seat){res.textContent='請選擇班級並填入座號';res.style.cssText='display:block;color:#f87171;font-size:13px;margin-top:8px;padding:6px 10px;background:rgba(239,68,68,.1);border-radius:6px';return;}
   fetch(SHEET_URL+'?action=unlock&class='+encodeURIComponent(cls)+'&seat='+encodeURIComponent(seat)+'&pwd='+encodeURIComponent(_adminPwd))
     .then(r=>r.json())
     .then(data=>{
-      res.textContent=data.success?(data.deleted>0?`已解鎖 ${cls} 座號 ${seat}（刪除 ${data.deleted} 筆紀錄）`:'查無此學生紀錄，可能尚未填答'):'操作失敗：'+data.msg;
-      res.className='admin-result '+(data.success?'ok':'err');res.style.display='block';
+      const ok=data.success&&data.deleted>0;
+      res.textContent=data.success?(data.deleted>0?`已解鎖 ${cls} 座號 ${seat}`:'查無此學生紀錄'):'失敗：'+data.msg;
+      res.style.cssText=`display:block;font-size:13px;margin-top:8px;padding:6px 10px;border-radius:6px;${ok?'background:rgba(0,196,167,.15);color:#00c4a7':'background:rgba(239,68,68,.1);color:#f87171'}`;
     })
-    .catch(()=>{res.textContent='連線失敗';res.className='admin-result err';res.style.display='block';});
+    .catch(()=>{res.textContent='連線失敗';res.style.cssText='display:block;color:#f87171;font-size:13px;margin-top:8px';});
 }
 
 function adminLoadStatus(){
   const cls=document.getElementById('admin-status-cls').value;
   const res=document.getElementById('admin-status-res');
   if(!cls){res.innerHTML='';return;}
-  res.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px">載入中...</div>';
+  res.innerHTML='<div style="color:#94a3b8;font-size:13px;padding:8px">載入中...</div>';
   fetch(SHEET_URL+'?action=getStatus&class='+encodeURIComponent(cls)+'&pwd='+encodeURIComponent(_adminPwd))
     .then(r=>r.json())
     .then(list=>{
-      if(list.success===false){res.innerHTML='<div class="admin-result err" style="display:block">'+list.msg+'</div>';return;}
+      if(list.success===false){res.innerHTML=`<div style="color:#f87171;font-size:13px">${list.msg}</div>`;return;}
       const done=list.filter(s=>s.completed).length;
-      res.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:8px">共 ${list.length} 人，已填 ${done} 人，未填 ${list.length-done} 人</div>`
-        +list.map(s=>`<div class="status-item ${s.completed?'done':'pending'}">
-          <span>${s.seat}號 ${s.name}</span>
-          <span class="status-badge ${s.completed?'done':'pending'}">${s.completed?'已完成':'未填答'}</span>
+      res.innerHTML=`<div style="font-size:12px;color:#94a3b8;margin-bottom:8px">共 ${list.length} 人｜已填 <span style="color:#00c4a7;font-weight:700">${done}</span> 人｜未填 <span style="color:#f87171;font-weight:700">${list.length-done}</span> 人</div>`
+        +list.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px;margin-bottom:3px;background:${s.completed?'rgba(0,196,167,.08)':'rgba(239,68,68,.06)'}">
+          <span style="font-size:13px;color:#e2e8f0">${s.seat}號 ${s.name}</span>
+          <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;${s.completed?'background:rgba(0,196,167,.2);color:#00c4a7':'background:rgba(239,68,68,.15);color:#f87171'}">${s.completed?'已完成':'未填答'}</span>
         </div>`).join('');
     })
-    .catch(()=>{res.innerHTML='<div style="color:#ef4444;font-size:13px">連線失敗</div>';});
+    .catch(()=>{res.innerHTML='<div style="color:#f87171;font-size:13px">連線失敗</div>';});
 }
 
 /*
