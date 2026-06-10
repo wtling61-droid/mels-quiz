@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高中段考學習策略診斷</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1120;--card:#131c2e;--card2:#1a2540;--accent:#00c4a7;--accent2:#6c63ff;--warm:#f4a261;--text:#e8edf5;--muted:#7a8ba3;--border:#1f2d45;--low:#ef4444;--high:#00c4a7;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;padding:20px}
+.screen.active{display:flex;flex-direction:column}
+
+/* WELCOME */
+#s-welcome{align-items:center;justify-content:center;text-align:center;padding:40px 24px;background:radial-gradient(ellipse at 50% 0%,#1a2540 0%,var(--bg) 70%)}
+.logo-icon{font-size:56px;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.title-main{font-family:'Outfit',sans-serif;font-size:clamp(24px,6vw,36px);font-weight:800;line-height:1.2;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.title-sub{font-size:15px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+.info-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:380px;margin-bottom:28px}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;text-align:center}
+.info-card .num{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;color:var(--accent)}
+.info-card .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Student info form */
+.student-form{width:100%;max-width:380px;margin-bottom:20px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-group{display:flex;flex-direction:column;gap:6px;text-align:left}
+.form-group label{font-size:13px;color:var(--muted);font-weight:500}
+.form-group input{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;font-family:'Noto Sans TC',sans-serif;outline:none;transition:border-color .2s}
+.form-group input:focus{border-color:var(--accent)}
+.form-group input::placeholder{color:rgba(122,139,163,.5)}
+.req{color:#ef4444;font-size:13px}
+.opt{color:var(--muted);font-size:11px;font-weight:400}
+.form-error{color:#ef4444;font-size:13px;margin-top:8px;text-align:center;padding:8px;background:rgba(239,68,68,.1);border-radius:8px}
+.btn-start{width:100%;max-width:380px;padding:18px;background:linear-gradient(135deg,var(--accent),#00a88e);border:none;border-radius:var(--r);color:#fff;font-size:17px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .2s}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,196,167,.3)}
+.note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
+
+/* DIM SCREENS */
+#s-dims{padding:0;flex-direction:column}
+.dim-header{padding:16px 20px 0;position:sticky;top:0;background:var(--bg);z-index:10;padding-bottom:14px}
+.progress-bar-wrap{height:4px;background:var(--border);border-radius:4px;margin-bottom:12px}
+.progress-bar-fill{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .4s ease}
+.step-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.step-text{font-size:13px;color:var(--muted)}
+.cat-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.cat-cognitive{background:#1a2a4a;color:#60a5fa}
+.cat-strategy{background:#1a3a2a;color:#4ade80}
+.cat-motivation{background:#3a1a2a;color:#f472b6}
+
+.dim-content{flex:1;padding:0 20px 20px;overflow-y:auto}
+.dim-hero{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.dim-icon{font-size:38px}
+.dim-name{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800}
+.dim-subtitle{font-size:13px;color:var(--muted)}
+
+.slider-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.slider-label{font-size:15px;font-weight:700;margin-bottom:4px}
+.slider-desc{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.scale-btns{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:8px}
+.scale-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:8px;padding:11px 0;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .18s;text-align:center;-webkit-tap-highlight-color:transparent}
+.scale-btn:active{transform:scale(.93)}
+.scale-btn.active{color:#fff;font-weight:800;border-color:transparent}
+.scale-btn-labels{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.28);font-family:'Noto Sans TC',sans-serif}
+
+.dim-nav{display:flex;gap:12px;padding:14px 20px;position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--border)}
+.btn-nav{flex:1;padding:15px;border:none;border-radius:var(--r);font-size:15px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .2s}
+.btn-back-nav{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.btn-back-nav:hover{background:var(--card2)}
+.btn-next-nav{background:linear-gradient(135deg,var(--accent2),#8b5cf6);color:#fff}
+.btn-next-nav:hover{opacity:.9;transform:translateY(-1px)}
+
+/* RESULTS */
+#s-results{padding:0}
+.results-scroll{padding:20px}
+.results-header{text-align:center;padding:28px 20px 24px;background:linear-gradient(180deg,var(--card2) 0%,transparent 100%);margin-bottom:4px}
+.student-badge{font-size:14px;color:var(--muted);margin-bottom:12px}
+.results-title{font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:var(--muted);letter-spacing:2px;margin-bottom:14px}
+.score-big{font-family:'Outfit',sans-serif;font-size:72px;font-weight:800;line-height:1;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.score-max{font-size:20px;color:var(--muted);font-family:'Outfit',sans-serif}
+.score-tag{display:inline-block;padding:6px 18px;border-radius:20px;font-size:14px;font-weight:700;margin-top:12px}
+
+/* Reliability */
+.reliability-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin:12px 0}
+.rel-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.rel-text{font-size:14px;color:var(--text)}
+.rel-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Radar */
+.radar-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.section-title{font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.radar-wrap{display:flex;justify-content:center}
+
+/* Category cards */
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:14px}
+.cat-card-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.cat-icon{font-size:28px}
+.cat-type-name{font-family:'Outfit',sans-serif;font-size:19px;font-weight:800}
+.cat-score-line{font-size:13px;color:var(--muted);margin-top:2px}
+.cat-desc{font-size:16px;color:var(--text);line-height:1.75;margin-bottom:12px}
+.cat-suggestion{background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:14px 16px;font-size:15px;line-height:1.7;margin-bottom:10px}
+.theory-text{font-size:13px;color:var(--muted);line-height:1.6;font-style:italic}
+
+/* Dim bars */
+.dim-bars{margin-top:14px}
+.dim-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dim-bar-label{font-size:13px;color:var(--muted);min-width:65px}
+.dim-bar-wrap{flex:1;height:7px;background:var(--border);border-radius:6px;overflow:hidden}
+.dim-bar-fill{height:7px;border-radius:6px;transition:width 1s ease}
+.dim-bar-val{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;min-width:35px;text-align:right;color:var(--accent)}
+
+/* Weakest dim */
+.weakest-section{background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);border-radius:var(--r);padding:20px;margin-top:16px}
+.weakest-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+.weakest-dim-name{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px}
+.weakest-desc{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.sug-label{font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
+.sug-text{background:var(--card);border-radius:8px;padding:13px 15px;font-size:15px;line-height:1.7;margin-bottom:10px}
+.sug-text.adv{border:1px solid rgba(108,99,255,.25)}
+.theory-block{background:rgba(0,196,167,.05);border-radius:8px;padding:13px 15px;font-size:13px;color:var(--muted);line-height:1.6;font-style:italic}
+
+/* Low score notice */
+.all-low-notice{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:14px;line-height:1.6;color:rgba(252,165,165,.9)}
+
+/* Subject section */
+.subject-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:14px}
+.subject-section-title{font-size:17px;font-weight:700;margin-bottom:6px}
+.subject-section-sub{font-size:14px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+.subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.subject-card{background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s}
+.subject-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.subject-card.selected{border-color:var(--accent);background:rgba(0,196,167,.08)}
+.subject-card.wide{grid-column:1/-1}
+.subject-emoji{font-size:28px;margin-bottom:6px}
+.subject-name{font-size:15px;font-weight:700}
+.subject-hint{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+
+/* Subject results */
+.subject-results{margin-top:16px}
+.subject-result-card{background:rgba(0,196,167,.06);border:1px solid rgba(0,196,167,.25);border-radius:var(--r);padding:20px;margin-bottom:12px}
+.sub-dim-title{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.action-card{border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.action-card.immediate{background:rgba(0,196,167,.08);border:1px solid rgba(0,196,167,.2)}
+.action-card.longterm{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.2)}
+.action-label{font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
+.action-label.im{color:var(--accent)}
+.action-label.lt{color:#a78bfa}
+.action-text{font-size:15px;line-height:1.7}
+
+/* Buttons */
+.results-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px;margin-bottom:36px}
+.btn-submit{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#00a88e);border:none;border-radius:var(--r);color:#fff;font-size:16px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .2s}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,196,167,.3)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-restart{width:100%;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);color:var(--muted);font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .2s}
+.btn-restart:hover{background:var(--card2);color:var(--text)}
+.submit-note{font-size:12px;color:var(--muted);text-align:center;line-height:1.5}
+
+/* Google Sheets setup notice */
+.sheets-notice{background:rgba(108,99,255,.08);border:1px dashed rgba(108,99,255,.3);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.6}
+
+.screen{animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* Backend detail panel */
+.backend-detail{background:rgba(108,99,255,.05);border:1px dashed rgba(108,99,255,.25);border-radius:var(--r);margin-top:8px;margin-bottom:16px}
+.backend-detail summary{padding:14px 18px;cursor:pointer;font-size:13px;font-weight:700;color:var(--muted);user-select:none;list-style:none;display:flex;align-items:center;gap:6px}
+.backend-detail summary::-webkit-details-marker{display:none}
+.backend-detail[open] summary{border-bottom:1px solid rgba(108,99,255,.15);color:var(--text)}
+.backend-body{padding:6px 18px 14px}
+.backend-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px}
+.backend-row:last-child{border-bottom:none!important}
+.backend-row .bl{color:var(--muted);font-size:13px}
+.backend-row .bv{font-weight:700;font-family:'Outfit',sans-serif;font-size:14px}
+.backend-summary-row{background:rgba(108,99,255,.08);border-radius:10px;padding:12px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+.backend-summary-row.warn{background:rgba(245,158,11,.1)}
+.backend-summary-row.danger{background:rgba(239,68,68,.1)}
+.bsum-label{font-size:12px;font-weight:700;letter-spacing:1px;color:var(--muted)}
+.bsum-val{font-size:15px;font-weight:800}
+</style>
+</head>
+<body>
+
+<!-- WELCOME -->
+<div id="s-welcome" class="screen active">
+  <div class="logo-icon">🎯</div>
+  <div class="title-main">學習策略診斷</div>
+  <div class="title-sub">根據最近一次段考的學習過程進行評分<br>找出你最需要加強的地方</div>
+  <div class="info-cards">
+    <div class="info-card"><div class="num">9</div><div class="lbl">學習向度</div></div>
+    <div class="info-card"><div class="num">33</div><div class="lbl">評估題目</div></div>
+    <div class="info-card"><div class="num">5</div><div class="lbl">學科領域</div></div>
+    <div class="info-card"><div class="num">12</div><div class="lbl">分鐘完成</div></div>
+  </div>
+  <div class="student-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>姓名 <span class="req">*</span></label>
+        <input type="text" id="inp-name" placeholder="請輸入姓名" required>
+      </div>
+      <div class="form-group">
+        <label>班級 <span class="req">*</span></label>
+        <input type="text" id="inp-class" placeholder="例：高一甲" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>座號 <span class="req">*</span></label>
+        <input type="text" id="inp-seat" placeholder="座號" required>
+      </div>
+      <div class="form-group"></div>
+    </div>
+    <div class="form-row" style="grid-template-columns:1fr">
+      <div class="form-group">
+        <label>電子信箱 <span class="opt">選填・填寫後可收到診斷結果</span></label>
+        <input type="email" id="inp-email" placeholder="your@email.com">
+      </div>
+    </div>
+    <div id="form-error" class="form-error" style="display:none">請填寫姓名、班級和座號</div>
+  </div>
+  <button class="btn-start" onclick="startAssessment()">開始診斷 →</button>
+  <div class="note">請根據實際情況誠實填寫，誠實作答才能得到最有用的建議<br>（姓名、班級、座號為必填；電子信箱選填，填寫後可收到診斷結果）</div>
+</div>
+
+<!-- DIM SCREENS -->
+<div id="s-dims" class="screen">
+  <div class="dim-header">
+    <div class="step-label">
+      <span class="step-text" id="step-text">第 1 步，共 9 步</span>
+      <span class="cat-badge" id="cat-badge">認知能力</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:11%"></div>
+    </div>
+  </div>
+  <div class="dim-content" id="dim-content"></div>
+  <div class="dim-nav">
+    <button class="btn-nav btn-back-nav" id="btn-back" onclick="goBack()">← 上一步</button>
+    <button class="btn-nav btn-next-nav" id="btn-next" onclick="goNext()">下一步 →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="s-results" class="screen">
+  <div class="results-scroll" id="results-inner"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CONFIG — 填入你的 Google Apps Script 網址
+// ═══════════════════════════════════════
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwhx1YqrVxn6m2k55MudmY7GwTffUaJV0psa3HZgn7TgRmlgRM-lSthDZWms1XgQ4yt/exec';
+let _dataSubmitted = false;  // 防止重複送出
+
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════
+// CONSISTENCY CHECK ITEMS（一致性配對題）
+// C1:讀書專注(step1↔7) C2:提早備考(step2↔6) C3:學習自信(step4↔8)
+// 差距閾值 ≥3 → 後台旗標；題目不計入任何向度分數
+// ═══════════════════════════════════════
+const CONSISTENCY_ITEMS={
+  C1a:{step:1,label:'持續學習狀態',desc:'讀書時，我能夠長時間保持注意力，不容易因外界刺激而分心。'},
+  C2a:{step:2,label:'提早備考習慣',desc:'考試前，我通常很早就開始準備，不會等到最後關頭才念書。'},
+  C3a:{step:4,label:'學習進步信念',desc:'我相信只要方法對、持續努力，我的學業表現一定可以進步。'},
+  C2b:{step:6,label:'計畫複習習慣',desc:'我習慣在考前一段時間就把讀書計畫排好，而不是臨時決定念什麼。'},
+  C1b:{step:7,label:'專注持續能力',desc:'當我進入讀書狀態後，周遭的聲音或干擾很難讓我停下來。'},
+  C3b:{step:8,label:'能力成長信心',desc:'我對自己學好各科的能力有信心，覺得努力不會白費。'},
+};
+const CONSISTENCY_PAIRS={C1:['C1a','C1b'],C2:['C2a','C2b'],C3:['C3a','C3b']};
+const CONSISTENCY_THRESH=3;
+
+const DIMENSIONS = [
+  { id:'memory', name:'記憶力', cat:'cognitive', catName:'認知能力', icon:'🧠', sub:'認知能力核心',
+    items:[
+      {label:'短期記憶保持', desc:'能在學習時記住剛讀過的內容', reverse:false},
+      {label:'長期記憶鞏固', desc:'學過的內容能長期記住不忘', reverse:false},
+      {label:'記憶保持困難', desc:'學過的東西通常幾天後就忘得差不多了', reverse:true}
+    ]},
+  { id:'focus', name:'專注力', cat:'cognitive', catName:'認知能力', icon:'🎯', sub:'注意力控制',
+    items:[
+      {label:'持續專注', desc:'能長時間專心學習不分心', reverse:false},
+      {label:'選擇性注意', desc:'能專注重要內容忽略干擾', reverse:false},
+      {label:'注意力轉換', desc:'能靈活切換不同學習任務', reverse:false}
+    ]},
+  { id:'understanding', name:'理解深度', cat:'cognitive', catName:'認知能力', icon:'🔍', sub:'概念掌握程度',
+    items:[
+      {label:'概念理解', desc:'能深入理解概念的本質意義', reverse:false},
+      {label:'知識連結', desc:'能將新舊知識建立有意義連結', reverse:false},
+      {label:'應用轉化', desc:'能將所學知識應用到新情境', reverse:false}
+    ]},
+  { id:'notes', name:'筆記系統', cat:'strategy', catName:'學習策略', icon:'📝', sub:'知識整理工具',
+    items:[
+      {label:'結構化記錄', desc:'筆記有清楚的層次和邏輯', reverse:false},
+      {label:'視覺化整理', desc:'會使用圖表、心智圖等方式', reverse:false},
+      {label:'複習整合', desc:'會定期整理和更新筆記內容', reverse:false}
+    ]},
+  { id:'review', name:'複習規劃', cat:'strategy', catName:'學習策略', icon:'🔄', sub:'記憶鞏固策略',
+    items:[
+      {label:'間隔複習', desc:'讀完後會在幾天內再複習一次，而不是等到考前才一次補完', reverse:false},
+      {label:'主動回想', desc:'複習時會先回想再看答案', reverse:false},
+      {label:'錯誤回顧習慣', desc:'考完試我通常不太會回頭看錯在哪裡', reverse:true}
+    ]},
+  { id:'timemanage', name:'時間管理', cat:'strategy', catName:'學習策略', icon:'⏰', sub:'效率優化系統',
+    items:[
+      {label:'計畫制定', desc:'會制定具體的學習時間計畫', reverse:false},
+      {label:'優先順序', desc:'能分辨重要和緊急的學習任務', reverse:false},
+      {label:'執行監控', desc:'會追蹤計畫執行情況並調整', reverse:false}
+    ]},
+  { id:'motivation', name:'內在動機', cat:'motivation', catName:'學習動機', icon:'🔥', sub:'學習驅動力',
+    items:[
+      {label:'學習興趣', desc:'對學習內容本身感到好奇', reverse:false},
+      {label:'自主性', desc:'能主動安排學習不需外在督促', reverse:false},
+      {label:'勝任感', desc:'相信自己有能力學好並克服困難', reverse:false}
+    ]},
+  { id:'goals', name:'目標設定', cat:'motivation', catName:'學習動機', icon:'🏹', sub:'方向導引系統',
+    items:[
+      {label:'目標明確性', desc:'有清楚具體的學習目標', reverse:false},
+      {label:'目標挑戰性', desc:'設定適當挑戰性的目標', reverse:false},
+      {label:'進度追蹤', desc:'會定期檢視目標達成情況', reverse:false}
+    ]},
+  { id:'persistence', name:'持續力', cat:'motivation', catName:'學習動機', icon:'💪', sub:'學習韌性',
+    items:[
+      {label:'毅力堅持', desc:'遇到困難時能堅持不放棄', reverse:false},
+      {label:'挫折恢復', desc:'遇到挫折我通常需要很長時間才能重新振作', reverse:true},
+      {label:'習慣養成', desc:'能建立穩定的學習習慣', reverse:false}
+    ]}
+];
+
+// Entry dimension recommended when whole category is low
+const CAT_ENTRY_DIM = {cognitive:'memory', strategy:'timemanage', motivation:'goals'};
+
+const CAT_TYPES = {
+  cognitive:[
+    {min:0,max:11,name:'認知發展型',emoji:'🌱',color:'#60a5fa',
+     desc:'學習時容易遺忘和分心，對概念的掌握以背誦為主，較難深入理解或靈活應用知識。這個階段需要的不是更努力，而是找到適合自己的學習方式。',
+     sug:'先從建立基本的記憶和專注習慣開始，不需要一次改變所有事情，每次進步一點點就是真正的前進。',
+     theory:'Sweller 認知負荷理論：當學習任務超過大腦的處理能力時，理解和記憶都會受阻，把內容拆小、一次專注一件事，才能讓認知效能逐步提升。'},
+    {min:12,max:22,name:'認知成長型',emoji:'🌿',color:'#34d399',
+     desc:'已有一定的學習能力基礎，能記住課堂內容，但知識容易停留在表面，遇到需要深入理解或跨概念應用的情境時會感到吃力。',
+     sug:'嘗試從「記住答案」轉向「理解原因」，多問自己「為什麼」，這個習慣能讓認知能力快速提升。',
+     theory:'Craik & Lockhart 處理層次理論：對學習內容進行越深層的思考，記憶越持久、理解越透徹。'},
+    {min:23,max:33,name:'認知應用型',emoji:'🌳',color:'#a78bfa',
+     desc:'認知能力表現穩定，能理解並記住大多數學習內容，也能在熟悉的情境中應用知識，但面對高難度或全新問題時仍有提升空間。',
+     sug:'主動尋找學習內容的跨科目連結，嘗試用所學去解釋或解決真實問題，讓認知能力從「夠用」變成「優秀」。',
+     theory:'Piaget 認知建構理論：持續用新挑戰去重組既有的認知結構，才能突破現有的學習天花板。'},
+    {min:34,max:45,name:'認知精熟型',emoji:'🏆',color:'#f59e0b',
+     desc:'具備高效的記憶策略、良好的專注力與深入的理解能力，能靈活運用知識解決複雜問題，是認知能力發展最完整的階段。',
+     sug:'嘗試教學他人或挑戰更高難度的問題，這是進一步精進認知能力最有效的方式。',
+     theory:'Vygotsky 最近發展區理論：在已有能力的基礎上接受適度挑戰，才能持續擴展認知邊界。'}
+  ],
+  strategy:[
+    {min:0,max:11,name:'策略發展型',emoji:'🌱',color:'#60a5fa',
+     desc:'尚未建立有效的學習方法，筆記可能雜亂或缺乏系統，複習通常靠臨時抱佛腳，時間分配也較無計畫。',
+     sug:'從最簡單的一個方法開始，例如每天花5分鐘整理當天學到的東西，小小的改變持續下去效果驚人。',
+     theory:'Zimmerman 自我調節學習理論：學習策略是可以培養的技能，從最基礎的方法開始建立，逐步發展成個人化的學習系統。'},
+    {min:12,max:22,name:'策略建構型',emoji:'🌿',color:'#34d399',
+     desc:'已開始使用一些學習方法，但各方法之間缺乏系統性，有時有效有時不穩定，還在摸索哪些方式最適合自己。',
+     sug:'把已經在用的方法固定下來，給每個方法一段時間嘗試，找到最有效的組合後就堅持使用。',
+     theory:'Flavell 後設認知理論：了解自己的學習過程、知道哪些方法對自己有效，是提升學習策略的關鍵一步。'},
+    {min:23,max:33,name:'策略整合型',emoji:'🌳',color:'#a78bfa',
+     desc:'具備完整的學習策略工具箱，能使用筆記、複習和時間管理方法，但各方法的整合和持續執行上仍有優化空間。',
+     sug:'重點不是再學新方法，而是讓現有的方法執行更穩定，例如建立固定的複習節奏或優化筆記結構。',
+     theory:'Kolb 體驗學習循環：真正的學習是「做→反思→歸納→應用」不斷循環的過程，讓每個方法都走完這個完整循環。'},
+    {min:34,max:45,name:'策略精熟型',emoji:'🏆',color:'#f59e0b',
+     desc:'學習策略全面且系統化，能根據不同科目和任務靈活調整方法，並持續追蹤和優化自己的學習過程。',
+     sug:'把你的學習方法分享給需要的同學，教學相長能讓你發現自己策略中還可以再精進的地方。',
+     theory:'Lave & Wenger 實踐社群理論：知識在真實應用和與他人分享中才能真正精熟，分享給他人是精熟者繼續成長的最佳路徑。'}
+  ],
+  motivation:[
+    {min:0,max:11,name:'動機培養型',emoji:'🌱',color:'#60a5fa',
+     desc:'學習動力主要來自外在壓力，例如段考或家長督促，對學習本身較少感到興趣，遇到挫折也比較容易放棄。',
+     sug:'不需要強迫自己愛上所有科目，先找到一個稍微有點興趣的地方作為起點，從小小的成功開始建立學習信心。',
+     theory:'Deci & Ryan 自我決定理論：當學習能滿足「自主感、勝任感、連結感」三個基本需求時，內在動機自然會逐漸萌芽。'},
+    {min:12,max:22,name:'動機探索型',emoji:'🌿',color:'#34d399',
+     desc:'開始對部分學習內容感到興趣，但動力來源不穩定，有時能主動學習，有時仍需要外在推動，還在找尋屬於自己的學習意義。',
+     sug:'多嘗試不同的學習方式或主題，找到讓自己感到有意思的連結點，把興趣和學業之間的橋梁慢慢搭建起來。',
+     theory:'Bandura 自我效能理論：透過小成功不斷累積「我做得到」的感受，動力就會從不穩定走向逐漸穩固。'},
+    {min:23,max:33,name:'動機驅動型',emoji:'🌳',color:'#a78bfa',
+     desc:'有清楚的學習目標和一定的內在動力，能主動安排學習並追蹤進度，但面對挫折或長期努力時，動力有時會起伏不定。',
+     sug:'建立一套讓自己在低潮時也能持續的機制，例如記錄自己的進步、找學習夥伴，或把學習連結到更長遠的人生目標。',
+     theory:'Dweck 成長心態理論：相信能力是可以透過努力改變的，才能在動力低谷時繼續堅持，把挫折轉化為成長的養分。'},
+    {min:34,max:45,name:'動機自主型',emoji:'🏆',color:'#f59e0b',
+     desc:'學習動力主要來自內在，對學習本身充滿好奇，能自主設定目標、規劃學習，遇到困難也能快速調整並持續前進。',
+     sug:'把這份自主動力延伸到更廣泛的領域，嘗試探索課本以外的知識，讓學習成為一輩子的習慣。',
+     theory:'Pink 驅動力理論：自主型學習者已具備自主、精熟、意義三個內在驅動要素，持續挑戰更高難度的目標能讓這份動力越來越強大。'}
+  ]
+};
+
+const DIM_CONTENT = {
+  memory:{
+    low:{desc:'剛讀過的內容很快就忘，不知道怎麼讓知識留下來，重讀了還是記不住',basic:'每讀完一段就合上書，用自己的話說出剛學的內容；準備一本「當日重點本」，睡前5分鐘寫下今天學了什麼',adv:'嘗試用聯想法記重點，把艱難的詞彙或公式串成一個故事或口訣',theory:'Atkinson & Shiffrin 多重記憶模型：你學到的東西要先在腦中「說一遍」，才能真正存進長期記憶'},
+    mid:{desc:'當下能記住內容，但過幾天就忘了，偶爾用一些記憶技巧，但沒有固定習慣',basic:'學完新內容的隔天、第三天、第七天各複習一次，每次只花10分鐘',adv:'複習時不要重讀，先閉上書本回想自己記得多少，再對答案',theory:'Craik & Lockhart 處理層次理論：用「想意思」的方式記，比「重複看」記得更久'},
+    high:{desc:'能靈活運用多種記憶方法，學過的內容長期留存，需要時也能順利提取',basic:'持續保持複習習慣，定期整理筆記讓記憶網絡保持活躍',adv:'把所學教給同學或說給自己聽，教學過程會逼出記憶盲點',theory:'Baddeley 工作記憶模型：能同時調動多種記憶資源、靈活整合，是高效學習者的核心能力'}},
+  focus:{
+    low:{desc:'坐下來讀書很快就分心，難以長時間集中，常被手機或周圍聲音打斷',basic:'用番茄鐘法從25分鐘專注開始，學習前把手機放到另一個房間',adv:'找到自己最能專注的時段和環境，把最難的科目安排在那個時段讀',theory:'Kahneman 注意力資源理論：專注力就像電力，是有限的，要學會保護和補充，不是靠意志力撐'},
+    mid:{desc:'能維持一段時間的專注，但遇到困難或無趣的內容容易中斷，切換科目後需要重新進入狀態',basic:'切換科目前花2分鐘整理這科學了什麼，幫大腦做好切換準備',adv:'遇到讀不下去的內容時，先問自己「這段在解釋什麼」，用好奇心帶動專注',theory:'Posner 注意力網絡理論：「持續專注」和「切換專注」是兩種不同能力，可以分開練習'},
+    high:{desc:'能長時間維持專注，有效過濾周圍干擾，在不同科目之間切換也不容易失焦',basic:'記錄哪些情況最容易讓自己進入狀態，維持這些條件',adv:'刻意挑戰更長時間或更高難度的學習任務，追求心流狀態',theory:'Csikszentmihalyi 心流理論：當挑戰難度和自己能力剛好匹配時，會進入最佳專注狀態，效率最高'}},
+  understanding:{
+    low:{desc:'習慣死背答案而非理解意思，說不出概念在講什麼，碰到換個說法的題目就不知所措',basic:'每讀完一個概念，停下來問自己三個問題：「這在說什麼？為什麼這樣？可以舉個例子嗎？」把答案寫下來再繼續',adv:'試著用最簡單的話把概念說給沒學過的人聽，說不清楚的地方就是還沒真正懂的地方',theory:'Sweller 認知負荷理論：一次要記太多東西大腦會超載，把內容拆成小塊慢慢消化，理解才會紮實'},
+    mid:{desc:'能理解單一概念，但遇到需要連結不同知識的題目時感到困難，應用到新情境會卡住',basic:'學完一個單元後，畫出重點概念之間的關係圖，用箭頭連接「誰影響誰」',adv:'主動找跨章節或跨科目的共同點，讓知識在不同情境中都能活用',theory:'Ausubel 有意義學習理論：新知識只有和舊知識產生連結，才能真正被理解，而不是孤立地存在記憶裡'},
+    high:{desc:'能掌握概念的核心意義，靈活連結新舊知識，遇到沒看過的題型也能找到切入點',basic:'整理各科目的核心概念清單，定期確認自己還能清楚說明每一個',adv:'從不同角度挑戰同一概念，正反面都想過，或找出這個概念的限制和例外',theory:'Piaget 認知建構理論：真正的高層次理解，來自不斷用新經驗去挑戰和重組自己原有的想法'}},
+  notes:{
+    low:{desc:'沒有固定的記筆記方式，筆記雜亂或乾脆不記，事後很難靠筆記複習',basic:'每堂課只記三件事——今天學了什麼、重點是什麼、還不懂的是什麼',adv:'嘗試康乃爾筆記法，把頁面分三區：上課記錄、關鍵詞、課後摘要',theory:'Kiewra 筆記功能理論：筆記有兩個作用，幫你在學習當下整理思路，也幫你事後找回內容，先建立基本記錄習慣最重要'},
+    mid:{desc:'有記筆記的習慣，但內容比較零散，缺乏清楚層次，複習時找不到重點',basic:'整理筆記時加上標題和小標，把相關內容歸在同一區塊，讓層次更清楚',adv:'嘗試用心智圖或流程圖整理單元內容，把文字轉化成視覺化結構',theory:'Paivio 雙碼理論：同時用文字和圖像兩種方式記錄，比純文字更容易記住和理解'},
+    high:{desc:'筆記有清楚的結構和邏輯，能定期整理更新，複習時可以快速找到需要的內容',basic:'維持每週整理筆記的習慣，每次花10分鐘把這週的筆記重新分類、補充遺漏的地方',adv:'把不同科目的相關筆記做連結，建立跨科目的知識網絡',theory:'Wittrock 生成學習理論：主動整合連結知識而不只是記錄，筆記才能成為真正有用的學習工具'}},
+  review:{
+    low:{desc:'沒有固定的複習計畫，通常段考前才臨時抱佛腳，讀過的東西很快就忘',basic:'每天花10分鐘回顧當天學的內容，不用讀很多，只要確認重點還記得',adv:'按照「學完隔天、第三天、第七天」的節奏安排複習，每次只花5–10分鐘',theory:'Ebbinghaus 遺忘曲線：記憶會隨時間快速流失，但在快要忘記前複習一次，記憶就能大幅延長'},
+    mid:{desc:'有複習的習慣，但通常是重讀一遍，沒有主動回想或分析錯誤，效果有限',basic:'複習時先不看書，把記得的內容寫在白紙上，再對照課本找出遺漏的地方',adv:'整理一本「錯題本」，把每次寫錯的題目記下來，隔週再重做一次',theory:'Roediger & Butler 提取練習效應：主動從記憶中挖出答案，比重讀更能強化記憶'},
+    high:{desc:'能按照遺忘規律安排複習，習慣主動回想而非重讀，也會分析錯誤找出原因',basic:'持續使用主動回想的複習方式，保持錯題分析的習慣',adv:'用「自我出題」代替複習，檢驗自己真正掌握了多少',theory:'Bjork 合意困難理論：學習時加入一點難度（如自我測驗），短期費力但長期記憶效果更好'}},
+  timemanage:{
+    low:{desc:'缺乏具體的學習計畫，常常不知道該先讀什麼，到了段考前才發現時間不夠',basic:'每天睡前花5分鐘列出明天三件學習任務，寫下「何時做、在哪裡做、怎麼開始」',adv:'每週日規劃一週讀書時間表，把段考日期標出來，從段考日往前倒推複習時間',theory:'Gollwitzer 執行意圖理論：把計畫具體到「何時、何地、如何做」，能大幅提升真正執行的機率'},
+    mid:{desc:'會制定學習計畫，但執行起來常常拖延或跳過，難以分辨哪些事情最重要',basic:'把今天的任務分成「一定要完成」和「有時間再做」兩類，先專注在前者',adv:'將任務依「重要」和「緊急」分四格排列，找出真正的優先項目',theory:'Covey 時間管理矩陣：很多人把時間花在緊急但不重要的事，真正重要的學習反而被忽略'},
+    high:{desc:'能制定具體計畫並確實執行，清楚分辨輕重緩急，也會追蹤自己的執行狀況',basic:'定期回顧計畫執行狀況，記錄哪些時段效率最高、哪些計畫最容易延誤',adv:'在計畫裡預留約20%的彈性時間，讓突發狀況不會打亂整體節奏',theory:'Zimmerman 自我調節學習理論：高效學習者不只執行計畫，還會持續監控和調整，形成良性循環'}},
+  motivation:{
+    low:{desc:'缺乏對學習內容的好奇心，需要外在督促才會讀書，遇到挫折容易想放棄',basic:'從自己稍微有點興趣的科目或單元開始，找到哪怕一個覺得有趣的主題，讓學習有一個可以依靠的起點',adv:'把學習內容和自己有興趣的事連結，例如喜歡籃球的人可以從運動數據學統計、喜歡音樂的人可以從歌詞學語文，帶著這個問題去讀，會發現學習沒那麼無聊',theory:'Deci & Ryan 自我決定理論：人需要「自主感、勝任感、連結感」三個心理需求被滿足，才會產生真正的學習動力'},
+    mid:{desc:'對部分科目有興趣，但學習動力不穩定，有時能自主學習，有時需要他人提醒',basic:'每天記錄一件今天學會或做到的事，不管多小都算，累積成功的感受',adv:'主動挑戰比現在稍微難一點的題目，從克服挑戰中建立學習信心',theory:'Bandura 自我效能理論：相信自己有能力做到是持續學習的關鍵，每一次小成功都在累積這份信心'},
+    high:{desc:'對學習本身感到好奇，能主動安排學習，相信自己有能力克服學習上的困難',basic:'定期問自己「我在進步嗎、這對我有意義嗎」，保持對學習的自我覺察',adv:'把自己有興趣的事融入學習，例如用喜歡的音樂背單字、用繪圖整理歷史脈絡，打造最適合自己的學習節奏',theory:'Pink 驅動力理論：真正持久的內在動力來自自主選擇、追求精熟、感受到意義，三者都具備時學習最持久'}},
+  goals:{
+    low:{desc:'沒有清楚的學習目標，不知道自己在為什麼而讀，也不會追蹤自己的學習進度',basic:'把「我要考好一點」換成具體目標，例如「這次數學要比上次多10分」，寫下來貼在書桌前',adv:'把大目標拆成每週的小任務，例如「本週要完成三回練習題」，每週確認有沒有達到',theory:'Locke & Latham 目標設定理論：目標要具體、有挑戰性才能真正驅動行動，模糊的目標就像沒有地址的地圖，無法帶你到達'},
+    mid:{desc:'有大方向的目標，但目標不夠具體，有時追蹤進度，但缺乏系統性的方法',basic:'當目標沒達到時，問自己「我可以怎麼調整方法」而不是「我是不是太笨了」',adv:'把目標從「成績導向」調整成「進步導向」，例如把「考80分」改成「這週要掌握三個新概念」',theory:'Dweck 成長心態理論：相信能力是可以透過努力改變的，遇到目標受挫時才會繼續堅持，而不是認定自己就是不行'},
+    high:{desc:'有清楚且具挑戰性的學習目標，定期檢視進度，能根據執行狀況調整方向',basic:'設定目標時同時想好「可能遇到什麼困難、我要怎麼應對」，讓計畫更有實際執行力',adv:'定期檢視目標是否需要調整，隨著能力提升，適時把目標難度往上提一個檔次',theory:'Oettingen 心理對比理論：同時想像目標達成的美好和可能遇到的障礙，再規劃如何克服，比單純正向思考更能真正行動'}},
+  persistence:{
+    low:{desc:'缺乏面對困難的韌性，遇到挫折後容易放棄，還沒有建立穩定的學習習慣',basic:'每天固定一個時間讀書，哪怕只有20分鐘，把它變成像刷牙一樣的日常習慣',adv:'遇到想放棄的時候，先不要停下來，改做同一科目比較容易的部分，維持學習的動能',theory:'Duckworth 恆毅力理論：長期成就不只靠天份，更靠對目標的熱情和堅持，而這種堅持是可以培養的，從建立小習慣開始'},
+    mid:{desc:'能維持一段時間的學習，但遇到較大挫折時容易停頓，習慣尚未完全穩固',basic:'感覺學不下去時，先休息15分鐘再回來，不要硬撐到完全放棄',adv:'找到屬於自己的「習慣觸發點」，例如一坐到書桌就先整理一下再開始，用固定動作啟動學習狀態',theory:'Duhigg 習慣迴圈理論：習慣由「觸發點→行為→獎勵」三個環節組成，找到屬於自己的觸發點，習慣就更容易穩固下來'},
+    high:{desc:'遇到困難能持續堅持，從失敗中快速恢復，已建立穩定且規律的學習習慣',basic:'記錄自己曾經克服過的學習困難，遇到挫折時回頭看看，提醒自己有過成功的經驗',adv:'把學習上的失敗當成資料分析——「這次哪裡出了問題、下次要怎麼不同」，建立從挫折中持續成長的習慣',theory:'Seligman 習得樂觀理論：韌性強的人會把挫折看成「暫時的、特定的、可以改變的」，而不是「永遠都這樣、哪裡都這樣、沒辦法改變」'}}
+};
+
+const SUBJECT_DATA = {
+  chinese:{name:'國文',emoji:'📝',
+    memory:{action:'準備一本「國文詞彙小本」，每讀完一篇文章挑出3個不熟的詞語或句型抄下來，睡前複誦一遍',goal:'建立豐富的文言文與現代文詞彙庫，讓寫作和閱讀理解都能信手拈來'},
+    focus:{action:'拿出一篇國文課文或課外散文，設定25分鐘計時器，只專心讀完這一篇，中間不做其他事',goal:'培養能深度閱讀長篇文章的專注力，不需要反覆重讀就能掌握文意'},
+    understanding:{action:'讀完一篇文章後，試著用三句話回答：作者想說什麼、為什麼這樣寫、你有什麼感受',goal:'能分析文本的主旨、結構與修辭手法，在選擇題和簡答題中都能展現真正的理解'},
+    notes:{action:'整理今天讀的一篇課文，用固定格式記錄：作者、主旨、重要詞語、修辭手法各一欄，一張A4搞定',goal:'建立系統化的國文筆記，段考複習時能一眼掌握每篇課文的核心重點'},
+    review:{action:'列出本學期所有國文課文的清單，標出哪些還不熟，明天先從稍微不熟的那一篇開始複習',goal:'段考前不再臨時抱佛腳，透過定期複習讓文言文和現代文都紮實掌握'},
+    timemanage:{action:'安排本週的國文讀書時段，至少排兩個30分鐘，一個用來讀課文、一個用來練閱讀測驗或作文',goal:'讓閱讀、寫作、文言文都有固定練習時間，不因段考前才急著補救'},
+    motivation:{action:'找一本稍微有點興趣的中文小說或散文，今天花20分鐘讀看看，不一定要是課本，課外讀物也很好',goal:'培養閱讀成為一種生活習慣，讓國文不只是考試科目，而是認識自己和世界的方式'},
+    goals:{action:'寫下一個這學期國文的具體目標，例如「作文拿到50分以上」或「文言文翻譯題不失分」，貼在書桌前',goal:'透過清楚的階段目標逐步提升閱讀和寫作能力，讓國文成為自己穩定的強項'},
+    persistence:{action:'設定每天固定20分鐘的國文時間，就算只是抄一段喜歡的句子或讀一篇短文也算，重要的是每天都做',goal:'建立每日閱讀與語文練習的習慣，讓能力持續累積，不靠段考前衝刺也能穩定發揮'}},
+  english:{name:'英文',emoji:'🌐',
+    memory:{action:'準備一本「英文單字本」，用字義＋例句＋聯想三欄記錄，今天先收錄10個這週學過的單字',goal:'建立穩固的英文詞彙量，閱讀和寫作時能精準選用適當的詞語'},
+    focus:{action:'拿出一篇英文閱讀文章，設定25分鐘計時器，這段時間只讀這篇，遇到不懂的詞先圈起來繼續讀',goal:'培養不依賴逐字翻譯的閱讀習慣，能在長篇文章中持續掌握主要文意'},
+    understanding:{action:'讀完一篇英文文章後，先不看題目，用中文說出文章大意和作者觀點，再對照題目確認理解是否正確',goal:'從「看懂每個字」進步到「理解文章邏輯和作者觀點」，選擇題和克漏字都能更精準'},
+    notes:{action:'整理今天學到的文法規則，用「規則說明＋正確例句＋常見錯誤」三欄格式記在筆記本，一條文法一頁',goal:'建立完整的英文文法和詞彙筆記系統，段考複習時能快速定位需要的內容'},
+    review:{action:'列出這學期學過的文法單元和單字範圍清單，標出哪些還不熟，明天先從稍微不熟的部分開始複習',goal:'透過系統性複習穩固文法基礎和字彙量，段考前不需要臨時猛背'},
+    timemanage:{action:'安排本週英文讀書時間，至少排三個時段：一個練文法、一個練閱讀、一個記單字，每次25分鐘',goal:'讓詞彙、文法、閱讀各項技能都有固定練習時間，英文能力均衡發展不偏科'},
+    motivation:{action:'找一首喜歡的英文歌或一部有興趣的英文影集，今天花20分鐘聽看看，感受英文在真實生活中的樣子',goal:'找到英文和自己興趣的連結點，讓學英文不只是為了段考，而是打開更寬廣的世界'},
+    goals:{action:'寫下一個這學期英文的具體目標，例如「克漏字不失分」或「閱讀測驗答對率達八成」，貼在書桌前',goal:'透過清楚的階段目標逐步提升英文各項能力，為升學和未來的國際溝通打好基礎'},
+    persistence:{action:'設定每天固定20分鐘的英文接觸時間，可以是背10個單字、讀一小段英文或聽一段英語，重要的是每天都做',goal:'建立每日接觸英語的習慣，讓英文能力在長期累積中自然提升'}},
+  math:{name:'數學',emoji:'🔢',
+    memory:{action:'整理今天學到的數學公式，用「公式＋推導說明＋應用例題」三欄記在一張卡片上，睡前背一遍',goal:'建立完整的數學公式庫，段考時能快速提取正確公式並靈活應用'},
+    focus:{action:'拿出一份數學練習題，設定25分鐘計時器，只專注解題，遇到卡關的題目先跳過繼續做，時間結束再回頭',goal:'培養在段考限時壓力下保持清晰思路的能力，不因一題卡關影響整體表現'},
+    understanding:{action:'選一個這週學的數學概念，不看課本，試著用自己的話說明「這個概念是什麼、為什麼這樣算、可以用在哪裡」',goal:'從背公式進步到理解公式的來源和意義，遇到填充題和計算題的變化型也能找到解題切入點'},
+    notes:{action:'整理今天的數學課重點，用「概念說明＋標準解題步驟＋容易出錯的地方」三欄格式記錄，一個概念一頁',goal:'建立清楚的數學筆記，段考複習時能一眼掌握各章節的核心概念和解題邏輯'},
+    review:{action:'列出本學期數學各章節清單，標出哪些還不熟，明天先從稍微不熟的章節挑兩題練習',goal:'透過持續練習建立穩固的各章節基礎，段考前不需要從頭重學'},
+    timemanage:{action:'安排本週數學讀書時間，至少排兩個25分鐘時段，一個用來讀觀念、一個用來練題目',goal:'讓觀念理解和題目練習都有固定時間，數學能力均衡提升不偏廢'},
+    motivation:{action:'找一個生活中的數學應用，例如計算折扣、統計班上某件事的比例，今天花20分鐘探索看看',goal:'找到數學和生活的連結，理解數學不只是考試科目，而是解決問題的思考工具'},
+    goals:{action:'寫下一個這學期數學的具體目標，例如「計算題不失分」或「某章節答對率達九成」，貼在書桌前',goal:'透過清楚的章節目標逐步累積數學實力，讓數學成為可以掌控的穩定科目'},
+    persistence:{action:'設定每天固定20分鐘的數學時間，就算只是複習一個公式或做一題練習題也算，重要的是每天都做',goal:'建立每日數學練習的習慣，讓計算能力和邏輯思維在長期累積中持續提升'}},
+  science:{name:'自然',emoji:'🔬',
+    memory:{action:'整理今天自然科學到的名詞或定義，用「名詞＋定義＋生活舉例」三欄記錄，今天先整理5個',goal:'建立紮實的自然科學概念詞彙庫，物化生地各科的核心名詞都能精確說明'},
+    focus:{action:'拿出一份自然科課文或講義，設定25分鐘計時器，只讀這份，遇到不懂的地方先畫線繼續讀，讀完再回頭查',goal:'培養閱讀科學文本的專注力，能在長篇課文或實驗說明中持續掌握關鍵概念'},
+    understanding:{action:'選一個這週學的原理或定律，問自己「這個現象為什麼會發生？如果條件改變，結果會怎樣？」，寫下你的想法',goal:'從背誦定義進步到理解原理背後的邏輯，遇到計算題或選擇題的應用型也能推理出答案'},
+    notes:{action:'把今天自然科的重點用圖表或流程圖整理，例如用箭頭畫出化學反應步驟、或用表格比較生物的分類特徵',goal:'建立以視覺化為主的自然科筆記系統，複雜的科學概念都能用圖像快速掌握'},
+    review:{action:'列出物化生地各科這學期的重點主題清單，標出哪些還不熟，明天先從稍微不熟的主題開始複習',goal:'讓物化生地各科都有固定複習頻率，不讓任何一科拖太久沒接觸'},
+    timemanage:{action:'安排本週自然科讀書時間，先從物化生地中挑兩科各安排一個25分鐘，下週再輪換另外兩科',goal:'讓物化生地各科都有均衡的學習時間，不因某一科投入過多而忽略其他'},
+    motivation:{action:'找一個最近讓你好奇的自然現象，例如天氣變化、食物變質或光線折射，今天花20分鐘查看科學解釋',goal:'培養對自然現象的好奇心，讓科學不只是課本知識，而是理解世界運作方式的工具'},
+    goals:{action:'寫下這學期自然科的具體目標，例如「化學計算題不失分」或「生物選擇題答對率達八成」，貼在書桌前',goal:'透過各科清楚的階段目標逐步累積自然科實力，物化生地都能穩定發揮'},
+    persistence:{action:'設定每天固定20分鐘的自然科時間，就算只是複習一個定義或看一張課本圖表也算，重要的是每天都做',goal:'建立持續接觸自然科學的習慣，讓知識在長期累積中自然鞏固'}},
+  social:{name:'社會',emoji:'🏛️',
+    memory:{action:'整理今天社會科學到的重要事件、概念或地名，用「名稱＋時間地點或定義＋重要性」三欄記錄，今天先整理5個',goal:'建立歷史、地理、公民各科完整的知識詞彙庫，重要概念都能清楚說明脈絡'},
+    focus:{action:'拿出一份社會科課文，設定25分鐘計時器，這段時間只讀這份，試著找出每個段落的主旨，不被細節分散注意',goal:'培養閱讀歷史、地理、公民長篇課文的專注力，能在大量文字中快速抓住重點'},
+    understanding:{action:'選一個這週社會科的事件或概念，問自己「為什麼會發生、影響是什麼、和現在有什麼關係」，寫下你的想法',goal:'從記住事件進步到理解因果關係，在選擇題和簡答題中都能展現真正的思考深度'},
+    notes:{action:'把今天社會科的重點用時間軸（歷史）、示意地圖（地理）或概念樹（公民）整理一次，選最適合的視覺化方式',goal:'建立以圖表和架構為主的社會科筆記，複雜的歷史脈絡或地理關係都能一眼掌握'},
+    review:{action:'列出歷史、地理、公民這學期各章節清單，標出哪些還不熟，明天先從稍微不熟的章節開始複習',goal:'讓歷史、地理、公民都有定期複習的節奏，不讓任何一科因久未接觸而遺忘'},
+    timemanage:{action:'安排本週社會科讀書時間，把歷史、地理、公民各分配一個25分鐘時段，三科輪流讀',goal:'讓三個科目都有均衡的學習時間，不因偏愛某科而忽略其他'},
+    motivation:{action:'找一則今天的時事新聞，花20分鐘想想它和你學過的歷史、地理或公民內容有什麼關聯',goal:'培養連結課本知識和現實世界的習慣，讓社會科不只是背誦，而是理解社會運作的方式'},
+    goals:{action:'寫下這學期社會科的具體目標，例如「歷史選擇題不失分」或「地理圖表判讀全對」，貼在書桌前',goal:'透過清楚的各科目標逐步累積社會科實力，歷史、地理、公民三科都能穩定發揮'},
+    persistence:{action:'設定每天固定20分鐘的社會科時間，就算只是複習一個歷史事件或地理名詞也算，重要的是每天都做',goal:'建立每日接觸社會科內容的習慣，讓知識自然累積，不靠段考前臨時死背'}}
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const state = {
+  step:0,
+  scores:{memory:[0,0,0],focus:[0,0,0],understanding:[0,0,0],notes:[0,0,0],review:[0,0,0],timemanage:[0,0,0],motivation:[0,0,0],goals:[0,0,0],persistence:[0,0,0]},
+  consistency:{C1a:null,C1b:null,C2a:null,C2b:null,C3a:null,C3b:null},
+  subject:null,
+  studentName:'',studentClass:'',studentSeat:'',studentEmail:''
+};
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startAssessment(){
+  const name=document.getElementById('inp-name').value.trim();
+  const cls=document.getElementById('inp-class').value.trim();
+  const seat=document.getElementById('inp-seat').value.trim();
+  const err=document.getElementById('form-error');
+  if(!name||!cls||!seat){
+    err.style.display='block';
+    return;
+  }
+  err.style.display='none';
+  state.studentName=name;
+  state.studentClass=cls;
+  state.studentSeat=seat;
+  state.studentEmail=document.getElementById('inp-email').value.trim();
+  state.step=0;
+  renderDimScreen();
+  showScreen('s-dims');
+}
+
+function goNext(){
+  saveCurrentScores();
+  if(state.step<8){state.step++;renderDimScreen();document.getElementById('dim-content').scrollTop=0;}
+  else{
+    _dataSubmitted=false;
+    showResults();
+    // 45秒後未選科目則自動送出（選了科目會更早觸發）
+    if(SHEET_URL) setTimeout(()=>{if(!_dataSubmitted) submitData();},45000);
+  }
+}
+
+function goBack(){
+  if(state.step>0){state.step--;renderDimScreen();document.getElementById('dim-content').scrollTop=0;}
+  else{showScreen('s-welcome');}
+}
+
+function saveCurrentScores(){} // values saved immediately on button click
+
+function btnColor(v){
+  const colors=['#ef4444','#f97316','#eab308','#84cc16','#22c55e','#00c4a7'];
+  return colors[v];
+}
+
+function setConsVal(key,val,el){
+  state.consistency[key]=val;
+  const container=el.closest('.scale-btns');
+  container.querySelectorAll('.scale-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active',i===val);
+    btn.style.background=i===val?btnColor(i):'';
+  });
+}
+
+function setVal(dimId,itemIdx,val,el){
+  state.scores[dimId][itemIdx]=val;
+  const container=el.closest('.scale-btns');
+  container.querySelectorAll('.scale-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active',i===val);
+    btn.style.background=i===val?btnColor(i):'';
+  });
+}
+
+
+// ═══════════════════════════════════════
+// DIM SCREEN
+// ═══════════════════════════════════════
+const CAT_CLS={cognitive:'cat-cognitive',strategy:'cat-strategy',motivation:'cat-motivation'};
+const CAT_LBL={cognitive:'認知能力',strategy:'學習策略',motivation:'學習動機'};
+
+function renderDimScreen(){
+  const dim=DIMENSIONS[state.step];
+  const pct=Math.round(((state.step+1)/9)*100);
+  document.getElementById('step-text').textContent=`第 ${state.step+1} 步，共 9 步`;
+  const badge=document.getElementById('cat-badge');
+  badge.textContent=CAT_LBL[dim.cat];badge.className='cat-badge '+CAT_CLS[dim.cat];
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('btn-back').style.display=state.step===0?'none':'block';
+  const saved=state.scores[dim.id];
+  document.getElementById('dim-content').innerHTML=`
+    <div class="dim-hero"><div class="dim-icon">${dim.icon}</div>
+    <div><div class="dim-name">${dim.name}</div><div class="dim-subtitle">${dim.sub}</div></div></div>
+    ${dim.items.map((item,i)=>`
+    <div class="slider-card">
+      <div class="slider-label">${item.label}</div>
+      <div class="slider-desc">${item.desc}</div>
+      <div class="scale-btns" id="btns-${dim.id}-${i}">
+        ${[0,1,2,3,4,5].map(v=>`<button class="scale-btn${saved[i]===v?' active':''}"
+          style="${saved[i]===v?`background:${btnColor(v)}`:''}"
+          onclick="setVal('${dim.id}',${i},${v},this)">${v}</button>`).join('')}
+      </div>
+      <div class="scale-btn-labels"><span>完全沒有</span><span>非常符合</span></div>
+    </div>`).join('')}
+    ${Object.entries(CONSISTENCY_ITEMS).filter(([k,ci])=>ci.step===state.step).map(([key,ci])=>`
+    <div class="slider-card">
+      <div class="slider-label">${ci.label}</div>
+      <div class="slider-desc">${ci.desc}</div>
+      <div class="scale-btns">
+        ${[0,1,2,3,4,5].map(v=>`<button class="scale-btn${state.consistency[key]!==null&&state.consistency[key]===v?' active':''}" style="${state.consistency[key]!==null&&state.consistency[key]===v?`background:${btnColor(v)}`:' '}" onclick="setConsVal('${key}',${v},this)">${v}</button>`).join('')}
+      </div>
+      <div class="scale-btn-labels"><span>完全沒有</span><span>非常符合</span></div>
+    </div>`).join('')}`;
+}
+
+// ═══════════════════════════════════════
+// SCORING
+// ═══════════════════════════════════════
+function getEffScore(dimId,itemIdx){
+  const dim=DIMENSIONS.find(d=>d.id===dimId);
+  const raw=state.scores[dimId][itemIdx];
+  return dim.items[itemIdx].reverse ? 5-raw : raw;
+}
+
+function dimScore(id){
+  const dim=DIMENSIONS.find(d=>d.id===id);
+  return dim.items.reduce((sum,_,i)=>sum+getEffScore(id,i),0);
+}
+
+function catScore(cat){
+  return DIMENSIONS.filter(d=>d.cat===cat).reduce((sum,d)=>sum+dimScore(d.id),0);
+}
+
+function totalScore(){return DIMENSIONS.reduce((sum,d)=>sum+dimScore(d.id),0);}
+
+function getLevel(score){
+  if(score<=5) return 'low';
+  if(score<=10) return 'mid';
+  return 'high';
+}
+
+function getCatType(cat){
+  const s=catScore(cat);
+  return CAT_TYPES[cat].find(t=>s>=t.min&&s<=t.max);
+}
+
+function getWeakest(cat){
+  const dims=DIMENSIONS.filter(d=>d.cat===cat);
+  return dims.reduce((w,d)=>dimScore(d.id)<dimScore(w.id)?d:w);
+}
+
+function isAllLow(cat){
+  return DIMENSIONS.filter(d=>d.cat===cat).every(d=>dimScore(d.id)<=5);
+}
+
+function getWeakLabel(score){
+  if(score<=5) return {label:'⚡ 最需要加強',color:'#ef4444',bg:'rgba(239,68,68,.15)'};
+  if(score<=10) return {label:'📌 重點發展',color:'#f59e0b',bg:'rgba(245,158,11,.15)'};
+  return {label:'🚀 精進方向',color:'#00c4a7',bg:'rgba(0,196,167,.15)'};
+}
+
+function getTag(total){
+  const p=total/135;
+  if(p<0.2) return{text:'需要全面提升',color:'#ef4444',bg:'rgba(239,68,68,.15)'};
+  if(p<0.4) return{text:'積極建立中',color:'#f97316',bg:'rgba(249,115,22,.15)'};
+  if(p<0.6) return{text:'穩定成長中',color:'#eab308',bg:'rgba(234,179,8,.15)'};
+  if(p<0.8) return{text:'表現良好',color:'#84cc16',bg:'rgba(132,204,22,.15)'};
+  return{text:'學習高手',color:'#00c4a7',bg:'rgba(0,196,167,.15)'};
+}
+
+// ═══════════════════════════════════════
+// RELIABILITY
+// ═══════════════════════════════════════
+function calcReliability(){
+  const raw=[],eff=[];
+  DIMENSIONS.forEach(dim=>{
+    dim.items.forEach((_,i)=>{
+      raw.push(state.scores[dim.id][i]);
+      eff.push(getEffScore(dim.id,i));
+    });
+  });
+  const mean=eff.reduce((a,b)=>a+b,0)/eff.length;
+  const sd=Math.sqrt(eff.reduce((s,x)=>s+Math.pow(x-mean,2),0)/eff.length);
+  const allSame=new Set(raw).size===1;
+  // Check reverse item inconsistency
+  let reverseFlags=0;
+  DIMENSIONS.forEach(dim=>{
+    dim.items.forEach((item,i)=>{
+      if(item.reverse){
+        const forwardAvg=dim.items.filter((_,j)=>j!==i).reduce((_,jj,j2)=>_+state.scores[dim.id][dim.items.findIndex((x,fi)=>fi!==i&&fi===j2)],0);
+        // Simpler: compare raw reverse with dim forward average
+        const fwdScores=dim.items.map((_,j)=>j===i?null:state.scores[dim.id][j]).filter(v=>v!==null);
+        const fwdAvg=fwdScores.reduce((a,b)=>a+b,0)/fwdScores.length;
+        const reverseRaw=state.scores[dim.id][i];
+        // 正向高＋反向原始值也高（說正向好，卻也說有負面問題）→ 矛盾
+        // 正向低＋反向原始值也低（說正向差，卻說沒有負面問題）→ 矛盾
+        if(fwdAvg>=4 && reverseRaw>=4) reverseFlags++;
+        if(fwdAvg<=1 && reverseRaw<=1) reverseFlags++;
+      }
+    });
+  });
+  let flag='normal',flagReason='',color='#00c4a7',dot='🟢';
+  if(allSame){flag='high_risk';flagReason='所有題目填相同分數';color='#ef4444';dot='🔴';}
+  else if(sd<0.6){flag='high_risk';flagReason='作答集中，可能未認真評估';color='#ef4444';dot='🔴';}
+  else if(reverseFlags>=2){flag='medium_risk';flagReason='部分反向題前後不一致';color='#f59e0b';dot='🟡';}
+  else if(sd<0.9){flag='low_risk';flagReason='作答略為集中，請留意';color='#f59e0b';dot='🟡';}
+  // C 一致性配對題差距檢核
+  let consFlags=0,consDetails=[];
+  Object.entries(CONSISTENCY_PAIRS).forEach(([pair,[keyA,keyB]])=>{
+    const diff=Math.abs((state.consistency[keyA]??0)-(state.consistency[keyB]??0));
+    if(diff>=CONSISTENCY_THRESH){consFlags++;consDetails.push(pair+'差距'+diff+'分');}
+  });
+  if(consFlags>=2&&flag==='normal'){flag='medium_risk';flagReason='多組一致性配對題差距過大';color='#f59e0b';dot='🟡';}
+  return{sd:sd.toFixed(2),flag,flagReason,color,dot,reverseFlags,consFlags,consDetails};
+}
+
+// ═══════════════════════════════════════
+// RADAR (Triangle)
+// ═══════════════════════════════════════
+function buildRadar(){
+  const cx=200,cy=175,r=130;
+  const cats=['cognitive','strategy','motivation'];
+  const angles=[-90,150,30];
+  const names=['認知能力','學習策略','學習動機'];
+  const colors=['#60a5fa','#4ade80','#f472b6'];
+  const pts=cats.map((cat,i)=>{
+    const ang=angles[i]*Math.PI/180;
+    const pct=catScore(cat)/45;
+    return{x:cx+r*pct*Math.cos(ang),y:cy+r*pct*Math.sin(ang)};
+  });
+  const gp=(p)=>cats.map((_,i)=>{
+    const ang=angles[i]*Math.PI/180;
+    return`${cx+r*p*Math.cos(ang)},${cy+r*p*Math.sin(ang)}`;
+  }).join(' ');
+  return`<svg class="radar" width="400" height="360" viewBox="0 0 400 360">
+    ${[.25,.5,.75,1].map(p=>`<polygon points="${gp(p)}" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>`).join('')}
+    ${cats.map((_,i)=>{const ang=angles[i]*Math.PI/180;return`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(ang)}" y2="${cy+r*Math.sin(ang)}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;}).join('')}
+    <polygon points="${pts.map(p=>`${p.x},${p.y}`).join(' ')}" fill="rgba(0,196,167,0.18)" stroke="#00c4a7" stroke-width="2"/>
+    ${pts.map((p,i)=>`<circle cx="${p.x}" cy="${p.y}" r="6" fill="${colors[i]}"/>`).join('')}
+    ${cats.map((_,i)=>{
+      const ang=angles[i]*Math.PI/180;
+      const lx=cx+(r+36)*Math.cos(ang),ly=cy+(r+36)*Math.sin(ang);
+      return`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="${colors[i]}" font-size="14" font-weight="700" font-family="Outfit,sans-serif">${names[i]}</text>
+      <text x="${lx}" y="${ly+18}" text-anchor="middle" dominant-baseline="middle" fill="rgba(255,255,255,0.45)" font-size="12" font-family="Outfit,sans-serif">${catScore(cats[i])}/45</text>`;
+    }).join('')}
+    <circle cx="${cx}" cy="${cy}" r="3" fill="rgba(255,255,255,0.25)"/>
+  </svg>`;
+}
+
+// ═══════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════
+function showResults(){
+  saveCurrentScores();
+  const total=totalScore();
+  const tag=getTag(total);
+  const rel=calcReliability();
+  const cats=['cognitive','strategy','motivation'];
+  const catEmojis={cognitive:'🧠',strategy:'📚',motivation:'🔥'};
+  const catColors={cognitive:'#60a5fa',strategy:'#4ade80',motivation:'#f472b6'};
+  const entryDimNames={cognitive:'記憶力',strategy:'時間管理',motivation:'目標設定'};
+
+  let html=`
+  <div class="results-header">
+    ${state.studentName?`<div class="student-badge">👤 ${state.studentName}${state.studentClass?' ｜ '+state.studentClass:''}${state.studentSeat?' ｜ 座號 '+state.studentSeat:''}</div>`:''}
+    <div class="results-title">學習策略診斷結果</div>
+    <div class="score-big">${total}</div>
+    <div class="score-max">/ 135</div>
+    <div class="score-tag" style="background:${tag.bg};color:${tag.color}">${tag.text}</div>
+  </div>
+
+  <div class="radar-section">
+    <div class="section-title">📊 能力雷達圖</div>
+    <div class="radar-wrap">${buildRadar()}</div>
+  </div>`;
+
+  cats.forEach(cat=>{
+    const type=getCatType(cat);
+    const weak=getWeakest(cat);
+    const weakS=dimScore(weak.id);
+    const level=getLevel(weakS);
+    const wlabel=getWeakLabel(weakS);
+    const content=DIM_CONTENT[weak.id][level];
+    const dims=DIMENSIONS.filter(d=>d.cat===cat);
+    const allLow=isAllLow(cat);
+
+    html+=`
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <div class="cat-icon">${catEmojis[cat]}</div>
+        <div>
+          <div class="cat-type-name" style="color:${type.color}">${type.emoji} ${type.name}</div>
+          <div class="cat-score-line">${catScore(cat)} / 45 分</div>
+        </div>
+      </div>
+      <div class="cat-desc">${type.desc}</div>
+      <div class="cat-suggestion">${type.sug}</div>
+      <div class="theory-text">📖 ${type.theory}</div>
+      <div class="dim-bars">
+        ${dims.map(d=>{
+          const s=dimScore(d.id);
+          const pct=(s/15)*100;
+          const c=s<=5?'#ef4444':s<=10?'#eab308':'#00c4a7';
+          return`<div class="dim-bar-row">
+            <span class="dim-bar-label">${d.name}</span>
+            <div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+            <span class="dim-bar-val">${s}/15</span></div>`;
+        }).join('')}
+      </div>
+      <div class="weakest-section">
+        ${allLow?`<div class="all-low-notice">📣 這個大類的三個向度都需要加強，建議先從「<strong>${entryDimNames[cat]}</strong>」開始打基礎，一步一步來不用著急。</div>`:''}
+        <div class="weakest-tag" style="background:${wlabel.bg};color:${wlabel.color}">${wlabel.label}</div>
+        <div class="weakest-dim-name">${weak.icon} ${weak.name}</div>
+        <div class="weakest-desc">${content.desc}</div>
+        <div class="sug-label" style="color:var(--accent)">📌 初階建議</div>
+        <div class="sug-text">${content.basic}</div>
+        <div class="sug-label" style="color:#a78bfa">🚀 進階挑戰</div>
+        <div class="sug-text adv">${content.adv}</div>
+        <div class="theory-block">📖 ${content.theory}</div>
+      </div>
+    </div>`;
+  });
+
+  // Subject selection section
+  html+=`
+  <div class="subject-section">
+    <div class="subject-section-title">🎯 選擇重點改進科目</div>
+    <div class="subject-section-sub">選擇你在段考中最需要提升的科目，獲得專屬的學習建議</div>
+    <div class="subject-grid">
+      <div class="subject-card" onclick="selectSubject('chinese',this)"><div class="subject-emoji">📝</div><div class="subject-name">國文</div><div class="subject-hint">閱讀理解・作文表達</div></div>
+      <div class="subject-card" onclick="selectSubject('english',this)"><div class="subject-emoji">🌐</div><div class="subject-name">英文</div><div class="subject-hint">單字文法・聽說讀寫</div></div>
+      <div class="subject-card" onclick="selectSubject('math',this)"><div class="subject-emoji">🔢</div><div class="subject-name">數學</div><div class="subject-hint">計算推理・解題技巧</div></div>
+      <div class="subject-card" onclick="selectSubject('science',this)"><div class="subject-emoji">🔬</div><div class="subject-name">自然</div><div class="subject-hint">物理化學・生物地科</div></div>
+      <div class="subject-card wide" onclick="selectSubject('social',this)"><div class="subject-emoji">🏛️</div><div class="subject-name">社會</div><div class="subject-hint">歷史地理・公民社會</div></div>
+    </div>
+    <div id="subject-results-area"></div>
+  </div>
+
+  <div class="results-actions">
+    <button class="btn-restart" onclick="restart()">↺ 重新診斷（清除所有作答）</button>
+  </div>`;
+
+  // ── 後台可信度報告（教師用）──
+  const _c1=Math.abs((state.consistency.C1a??0)-(state.consistency.C1b??0));
+  const _c2=Math.abs((state.consistency.C2a??0)-(state.consistency.C2b??0));
+  const _c3=Math.abs((state.consistency.C3a??0)-(state.consistency.C3b??0));
+  const _totalFlags=(rel.consFlags||0)+(rel.reverseFlags>=2?1:0)+(parseFloat(rel.sd)<0.6?1:0);
+  const _summaryClass=_totalFlags>=2?'danger':_totalFlags===1?'warn':'';
+  const _summaryText=_totalFlags===0?'✓ 正常 — 資料可信':_totalFlags===1?'🔍 輕度異常，建議留意':'⚠️ 高度可疑，建議個別確認';
+  const _relIcon=parseFloat(rel.sd)<0.6?'🔴':parseFloat(rel.sd)<0.9?'🟡':'🟢';
+  const _revIcon=rel.reverseFlags>=2?'🔴':rel.reverseFlags>=1?'🟡':'🟢';
+  const _c1Icon=_c1>=3?'🔴':'🟢';
+  const _c2Icon=_c2>=3?'🔴':'🟢';
+  const _c3Icon=_c3>=3?'🔴':'🟢';
+  html+=`
+  <details class="backend-detail">
+    <summary>🔒 後台可信度報告（教師用）</summary>
+    <div class="backend-body">
+      <div class="backend-row">
+        <span class="bl">作答標準差 SD</span>
+        <span class="bv">${rel.sd} ${_relIcon}</span>
+      </div>
+      <div class="backend-row">
+        <span class="bl">反向題不一致組數</span>
+        <span class="bv">${rel.reverseFlags} 組 ${_revIcon}</span>
+      </div>
+      <div class="backend-row">
+        <span class="bl">C1 讀書專注 <span style="font-size:11px;opacity:.45">（${state.consistency.C1a??'—'} vs ${state.consistency.C1b??'—'}）</span></span>
+        <span class="bv">差距 ${_c1} ${_c1Icon}</span>
+      </div>
+      <div class="backend-row">
+        <span class="bl">C2 提早備考 <span style="font-size:11px;opacity:.45">（${state.consistency.C2a??'—'} vs ${state.consistency.C2b??'—'}）</span></span>
+        <span class="bv">差距 ${_c2} ${_c2Icon}</span>
+      </div>
+      <div class="backend-row">
+        <span class="bl">C3 學習自信 <span style="font-size:11px;opacity:.45">（${state.consistency.C3a??'—'} vs ${state.consistency.C3b??'—'}）</span></span>
+        <span class="bv">差距 ${_c3} ${_c3Icon}</span>
+      </div>
+      <div class="backend-summary-row ${_summaryClass}">
+        <span class="bsum-label">綜合評估</span>
+        <span class="bsum-val">${_summaryText}</span>
+      </div>
+    </div>
+  </details>`;
+
+  document.getElementById('results-inner').innerHTML=html;
+  showScreen('s-results');
+  // 送出時機改由 selectSubject 觸發，或 goNext 的 45秒備援 timeout
+}
+
+function selectSubject(sub,el){
+  state.subject=sub;
+  document.querySelectorAll('.subject-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  renderSubjectResults(sub);
+  // 選科目後立即送出（保證 subject 有值）
+  if(SHEET_URL&&!_dataSubmitted){_dataSubmitted=true;submitData();}
+}
+
+function renderSubjectResults(sub){
+  const subData=SUBJECT_DATA[sub];
+  const cats=['cognitive','strategy','motivation'];
+  const catColors={cognitive:'#60a5fa',strategy:'#4ade80',motivation:'#f472b6'};
+  let html='<div class="subject-results">';
+  cats.forEach(cat=>{
+    const weak=getWeakest(cat);
+    const sd=subData[weak.id];
+    html+=`<div class="subject-result-card">
+      <div class="sub-dim-title" style="color:${catColors[cat]}">
+        ${weak.icon} ${weak.name} × ${subData.emoji} ${subData.name}科
+      </div>
+      <div class="action-card immediate">
+        <div class="action-label im">⚡ 立即行動</div>
+        <div class="action-text">${sd.action}</div>
+      </div>
+      <div class="action-card longterm">
+        <div class="action-label lt">🎯 長期目標</div>
+        <div class="action-text">${sd.goal}</div>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('subject-results-area').innerHTML=html;
+  document.getElementById('subject-results-area').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ═══════════════════════════════════════
+// GOOGLE SHEETS SUBMIT
+// ═══════════════════════════════════════
+async function submitData(){
+  _dataSubmitted=true;
+  if(!SHEET_URL) return;
+  const rel=calcReliability();
+  // ── 計算全量表最弱向度 ──
+  const allDimIds=['memory','focus','understanding','notes','review','timemanage','motivation','goals','persistence'];
+  const weakId=allDimIds.reduce((a,b)=>dimScore(a)<=dimScore(b)?a:b);
+  const weakDim=DIMENSIONS.find(d=>d.id===weakId);
+  const weakS=dimScore(weakId);
+  const weakLv=getLevel(weakS);
+  const weakContent=DIM_CONTENT[weakId]?.[weakLv]||{};
+  const payload={
+    timestamp:new Date().toLocaleString('zh-TW'),
+    name:state.studentName,class:state.studentClass,seat:state.studentSeat,
+    email:state.studentEmail,
+    total:totalScore(),
+    catCognitive:catScore('cognitive'),catStrategy:catScore('strategy'),catMotivation:catScore('motivation'),
+    memory:dimScore('memory'),focus:dimScore('focus'),understanding:dimScore('understanding'),
+    notes:dimScore('notes'),review:dimScore('review'),timemanage:dimScore('timemanage'),
+    motivation:dimScore('motivation'),goals:dimScore('goals'),persistence:dimScore('persistence'),
+    sd:rel.sd,reliabilityFlag:rel.flag,flagReason:rel.flagReason,
+    C1a:state.consistency.C1a??0,C1b:state.consistency.C1b??0,
+    C2a:state.consistency.C2a??0,C2b:state.consistency.C2b??0,
+    C3a:state.consistency.C3a??0,C3b:state.consistency.C3b??0,
+    consFlag:rel.consFlags||0,
+    consDetail:rel.consDetails&&rel.consDetails.length?rel.consDetails.join('|'):'正常',
+    subject:state.subject||'未選擇',
+    // 最弱向度資訊（供 Email 建議使用）
+    weakDimName:weakDim?.name||'',
+    weakDimScore:weakS,
+    weakDimDesc:weakContent.desc||'',
+    weakDimBasic:weakContent.basic||'',
+    weakDimAdv:weakContent.adv||''
+  };
+  // 靜默送出（fire-and-forget）
+  fetch(SHEET_URL,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'}).catch(()=>{});
+}
+
+function restart(){
+  _dataSubmitted=false;
+  state.scores={memory:[0,0,0],focus:[0,0,0],understanding:[0,0,0],notes:[0,0,0],review:[0,0,0],timemanage:[0,0,0],motivation:[0,0,0],goals:[0,0,0],persistence:[0,0,0]};
+  state.consistency={C1a:null,C1b:null,C2a:null,C2b:null,C3a:null,C3b:null};
+  state.subject=null;state.step=0;
+  state.studentName='';state.studentClass='';state.studentSeat='';state.studentEmail='';
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-class').value='';
+  document.getElementById('inp-seat').value='';
+  document.getElementById('inp-email').value='';
+  document.getElementById('form-error').style.display='none';
+  showScreen('s-welcome');
+}
+
+/*
+════════════════════════════════════════════
+GOOGLE APPS SCRIPT 設定說明（v2，含一致性配對欄位）
+════════════════════════════════════════════
+1. 開啟 Google Sheets，建立新試算表
+2. 點選「擴充功能」→「Apps Script」
+3. 貼入以下程式碼：
+
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      '時間戳記','姓名','班級','座號','電子信箱','總分',
+      '認知能力','學習策略','學習動機',
+      '記憶力','專注力','理解深度','筆記系統','複習規劃','時間管理',
+      '內在動機','目標設定','持續力',
+      'SD','可信度旗標','旗標原因',
+      'C1a_讀書專注a','C1b_讀書專注b',
+      'C2a_提早備考a','C2b_提早備考b',
+      'C3a_學習自信a','C3b_學習自信b',
+      '一致性旗標數','一致性差距詳情',
+      '綜合異常評估','選擇科目'
+    ]);
+    applyHeaderFormat(sheet);
+  }
+
+  const consFlag = parseInt(data.consFlag) || 0;
+  const isBad = data.reliabilityFlag === 'high_risk' || consFlag >= 2;
+  const isWarn = !isBad && (
+    data.reliabilityFlag === 'medium_risk' ||
+    data.reliabilityFlag === 'low_risk' ||
+    consFlag >= 1
+  );
+  const anomaly = isBad ? '⚠️ 高度可疑' : isWarn ? '🔍 輕度異常' : '✓ 正常';
+
+  sheet.appendRow([
+    data.timestamp, data.name, data.class, data.seat, data.email||'', data.total,
+    data.catCognitive, data.catStrategy, data.catMotivation,
+    data.memory, data.focus, data.understanding, data.notes, data.review, data.timemanage,
+    data.motivation, data.goals, data.persistence,
+    data.sd, data.reliabilityFlag, data.flagReason,
+    data.C1a||0, data.C1b||0,
+    data.C2a||0, data.C2b||0,
+    data.C3a||0, data.C3b||0,
+    data.consFlag||0, data.consDetail||'正常',
+    anomaly, data.subject||'未選擇'
+  ]);
+
+  // 異常行自動標色
+  const lastRow = sheet.getLastRow();
+  const rowRange = sheet.getRange(lastRow, 1, 1, sheet.getLastColumn());
+  if (isBad)       rowRange.setBackground('#fce8e6');   // 淡紅 = 高度可疑
+  else if (isWarn) rowRange.setBackground('#fef9c3');   // 淡黃 = 輕度異常
+
+  if (data.email && data.email.includes('@')) {
+    const subject = '【學習策略診斷結果】' + data.name + ' - ' + data.class;
+    GmailApp.sendEmail(data.email, subject, '', {htmlBody: buildEmail(data), name: '學習策略診斷系統'});
+  }
+  return ContentService.createTextOutput('OK');
+}
+
+function applyHeaderFormat(sheet) {
+  const header = sheet.getRange(1, 1, 1, sheet.getLastColumn());
+  header.setBackground('#1a2540').setFontColor('#ffffff').setFontWeight('bold');
+  sheet.setFrozenRows(1);
+  // 凍結標題列，方便瀏覽
+}
+
+// 【一鍵建立條件格式】在 Apps Script 編輯器執行一次即可
+function setupConditionalFormat() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const lastCol = sheet.getMaxColumns();
+  const rules = [];
+
+  // 找「綜合異常評估」欄（第30欄，0-indexed=29）
+  const anomalyCol = 30;
+
+  // ⚠️ 高度可疑 → 淡紅
+  const ruleRed = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextContains('高度')
+    .setBackground('#fce8e6')
+    .setRanges([sheet.getRange(2, 1, 1000, lastCol)])
+    .build();
+
+  // 🔍 輕度異常 → 淡黃
+  const ruleYellow = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextContains('輕度')
+    .setBackground('#fef9c3')
+    .setRanges([sheet.getRange(2, anomalyCol, 1000, 1)])
+    .build();
+
+  sheet.setConditionalFormatRules([ruleRed, ruleYellow]);
+  SpreadsheetApp.getUi().alert('條件格式設定完成！');
+}
+
+function buildEmail(d) {
+  const flagLabel = d.reliabilityFlag === 'high_risk' ? '⚠️ 建議重測' :
+                    d.reliabilityFlag === 'medium_risk' ? '🔍 請留意' : '✓ 正常';
+  return '<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">' +
+    '<h2 style="color:#00c4a7">學習策略診斷結果</h2>' +
+    '<p>' + d.name + ' 同學（' + d.class + ' / 座號 ' + d.seat + '）</p>' +
+    '<p style="color:#666">診斷時間：' + d.timestamp + '</p>' +
+    '<hr>' +
+    '<h3>總分：' + d.total + ' / 135</h3>' +
+    '<h4>三大類分數</h4>' +
+    '<ul>' +
+    '<li>認知能力：' + d.catCognitive + ' / 45</li>' +
+    '<li>學習策略：' + d.catStrategy + ' / 45</li>' +
+    '<li>學習動機：' + d.catMotivation + ' / 45</li>' +
+    '</ul>' +
+    '<h4>各向度分數</h4>' +
+    '<ul>' +
+    '<li>記憶力：' + d.memory + ' / 15</li>' +
+    '<li>專注力：' + d.focus + ' / 15</li>' +
+    '<li>理解深度：' + d.understanding + ' / 15</li>' +
+    '<li>筆記系統：' + d.notes + ' / 15</li>' +
+    '<li>複習規劃：' + d.review + ' / 15</li>' +
+    '<li>時間管理：' + d.timemanage + ' / 15</li>' +
+    '<li>內在動機：' + d.motivation + ' / 15</li>' +
+    '<li>目標設定：' + d.goals + ' / 15</li>' +
+    '<li>持續力：' + d.persistence + ' / 15</li>' +
+    '</ul>' +
+    (d.weakDimName ? ('<hr><h3 style="color:#a78bfa">🎯 最需要加強的向度：' + d.weakDimName + '（' + d.weakDimScore + '/15）</h3>' +
+    '<p>' + (d.weakDimDesc||'') + '</p>' +
+    '<h4 style="color:#00c4a7">📌 初階建議</h4><p>' + (d.weakDimBasic||'') + '</p>' +
+    '<h4 style="color:#a78bfa">🚀 進階挑戰</h4><p>' + (d.weakDimAdv||'') + '</p>') : '') +
+    '<p style="color:#888;font-size:13px">詳細建議與說明請回到診斷工具查看完整結果。</p>' +
+    '</div>';
+}
+
+4. 點選「部署」→「新增部署作業」→ 類型選「網頁應用程式」
+5. 設定「以以下身分執行：我」、「誰可以存取：所有人」
+6. 部署後複製「網頁應用程式網址」
+7. 貼入本 HTML 檔案頂部的 SHEET_URL 變數
+
+【初次部署後額外步驟】
+8. 在 Apps Script 編輯器中，手動執行一次 setupConditionalFormat()
+   → 這會讓異常行自動標色（⚠️淡紅 / 🔍淡黃）
+
+【Sheets 欄位說明（共 30 欄）】
+A 時間戳記  B 姓名  C 班級  D 座號  E 信箱  F 總分
+G 認知能力  H 學習策略  I 學習動機
+J 記憶力  K 專注力  L 理解深度  M 筆記系統  N 複習規劃  O 時間管理
+P 內在動機  Q 目標設定  R 持續力
+S SD  T 可信度旗標  U 旗標原因
+V C1a_讀書專注a  W C1b_讀書專注b
+X C2a_提早備考a  Y C2b_提早備考b
+Z C3a_學習自信a  AA C3b_學習自信b
+AB 一致性旗標數  AC 一致性差距詳情  AD 綜合異常評估  AE 選擇科目
+
+注意：信件寄出者為你的 Gmail 帳號，學生收到的信件寄件人會是你。
+════════════════════════════════════════════
+*/
+</script>
+</body>
+</html>
