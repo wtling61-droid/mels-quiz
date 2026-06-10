@@ -58,7 +58,16 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .status-badge.done{background:rgba(0,196,167,.2);color:var(--accent)}
 .status-badge.pending{background:rgba(239,68,68,.15);color:#ef4444}
 .welcome-loading{padding:40px;text-align:center;color:var(--muted);font-size:14px}
+.locked-class{padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;color:var(--accent);letter-spacing:.02em}
 .completed-notice{background:rgba(0,196,167,.1);border:1px solid rgba(0,196,167,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--accent);text-align:center;margin-bottom:16px}
+.bg-vars{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-top:10px}
+.bg-title{font-size:12px;color:var(--muted);margin-bottom:12px;letter-spacing:.02em}
+.bg-group{margin-bottom:12px}
+.bg-group:last-child{margin-bottom:0}
+.bg-label{font-size:13px;color:var(--text);margin-bottom:6px;font-weight:500}
+.bg-opts{display:flex;flex-wrap:wrap;gap:6px}
+.bg-btn{padding:5px 13px;background:var(--card);border:1px solid var(--border);border-radius:20px;color:var(--muted);font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.bg-btn.selected{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn-start{width:100%;max-width:380px;padding:18px;background:linear-gradient(135deg,var(--accent),#00a88e);border:none;border-radius:var(--r);color:#fff;font-size:17px;font-weight:700;font-family:'Noto Sans TC',sans-serif;cursor:pointer;transition:all .2s}
 .btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,196,167,.3)}
 .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
@@ -228,26 +237,18 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <div id="welcome-form" class="student-form" style="display:none">
     <div class="form-row">
       <div class="form-group">
-        <label>班級 <span class="req">*</span></label>
-        <select id="inp-class" onchange="onClassChange()">
-          <option value="">請選擇班級</option>
-          <option value="高一忠">高一忠</option>
-          <option value="高一孝">高一孝</option>
-          <option value="高一仁">高一仁</option>
-          <option value="高一愛">高一愛</option>
-        </select>
+        <label>班級</label>
+        <div class="locked-class" id="display-class"></div>
       </div>
       <div class="form-group">
-        <label>姓名 <span class="req">*</span></label>
-        <select id="inp-name" onchange="onNameChange()" disabled>
-          <option value="">請先選擇班級</option>
-        </select>
+        <label>座號 <span class="req">*</span></label>
+        <input type="text" id="inp-seat" placeholder="請輸入座號">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label>座號</label>
-        <input type="text" id="inp-seat" readonly placeholder="選擇姓名後自動帶入" style="opacity:.7">
+        <label>姓名 <span class="req">*</span></label>
+        <input type="text" id="inp-name" placeholder="請輸入姓名">
       </div>
       <div class="form-group">
         <label>電子信箱 <span class="req">*</span></label>
@@ -255,7 +256,53 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       </div>
     </div>
     <div id="form-error" class="form-error" style="display:none"></div>
-  </div>
+    <div class="bg-vars">
+      <div class="bg-title">學習背景（性別必填，其餘快速點選即可）</div>
+      <div class="bg-group">
+        <div class="bg-label">性別 <span class="req">*</span></div>
+        <div class="bg-opts" id="bg-gender">
+          <button class="bg-btn" onclick="selectBg('gender','M',this)">生理男</button>
+          <button class="bg-btn" onclick="selectBg('gender','F',this)">生理女</button>
+        </div>
+      </div>
+      <div class="bg-group">
+        <div class="bg-label">每天大約讀幾小時書？</div>
+        <div class="bg-opts" id="bg-studyHours">
+          <button class="bg-btn" onclick="selectBg('studyHours','&lt;1h',this)">不到1小時</button>
+          <button class="bg-btn" onclick="selectBg('studyHours','1-2h',this)">1-2小時</button>
+          <button class="bg-btn" onclick="selectBg('studyHours','2-3h',this)">2-3小時</button>
+          <button class="bg-btn" onclick="selectBg('studyHours','&gt;3h',this)">3小時以上</button>
+        </div>
+      </div>
+      <div class="bg-group">
+        <div class="bg-label">平均每天睡幾小時？</div>
+        <div class="bg-opts" id="bg-sleep">
+          <button class="bg-btn" onclick="selectBg('sleep','&lt;6h',this)">不到6小時</button>
+          <button class="bg-btn" onclick="selectBg('sleep','6-7h',this)">6-7小時</button>
+          <button class="bg-btn" onclick="selectBg('sleep','7-8h',this)">7-8小時</button>
+          <button class="bg-btn" onclick="selectBg('sleep','&gt;8h',this)">8小時以上</button>
+        </div>
+      </div>
+      <div class="bg-group">
+        <div class="bg-label">上次段考你大概幾天前開始準備？</div>
+        <div class="bg-opts" id="bg-prepTime">
+          <button class="bg-btn" onclick="selectBg('prepTime','7+',this)">1週以上</button>
+          <button class="bg-btn" onclick="selectBg('prepTime','4-6d',this)">4-6天</button>
+          <button class="bg-btn" onclick="selectBg('prepTime','2-3d',this)">2-3天</button>
+          <button class="bg-btn" onclick="selectBg('prepTime','1d',this)">前一天才念</button>
+        </div>
+      </div>
+      <div class="bg-group">
+        <div class="bg-label">學習帶給你的壓力有多大？</div>
+        <div class="bg-opts" id="bg-stress">
+          <button class="bg-btn" onclick="selectBg('stress','1',this)">完全沒有</button>
+          <button class="bg-btn" onclick="selectBg('stress','2',this)">有一點</button>
+          <button class="bg-btn" onclick="selectBg('stress','3',this)">普通</button>
+          <button class="bg-btn" onclick="selectBg('stress','4',this)">蠻大的</button>
+          <button class="bg-btn" onclick="selectBg('stress','5',this)">壓力很大</button>
+        </div>
+      </div>
+    </div>
 
   <button class="btn-start" id="btn-start" onclick="startAssessment()" style="display:none">開始診斷 →</button>
   <div class="note" id="welcome-note" style="display:none">請根據實際情況誠實填寫，誠實作答才能得到最有用的建議</div>
@@ -294,6 +341,19 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     </div>
     <div id="admin-panel" style="display:none">
       <div class="admin-title">測驗管理</div>
+      <div class="admin-section">
+        <h4>設定施測班級</h4>
+        <div id="current-active-class" style="font-size:13px;color:var(--muted);margin-bottom:10px"></div>
+        <div class="admin-row">
+          <select id="admin-active-cls">
+            <option value="">關閉施測（學生無法進入）</option>
+            <option>高一忠</option><option>高一孝</option>
+            <option>高一仁</option><option>高一愛</option>
+          </select>
+          <button class="btn-admin" onclick="adminSetClass()">套用</button>
+        </div>
+        <div id="admin-setclass-res" class="admin-result"></div>
+      </div>
       <div class="admin-section">
         <h4>解鎖學生（清除填答紀錄，讓學生可重新作答）</h4>
         <div class="admin-row">
@@ -573,6 +633,7 @@ const state = {
   consistency:{C1a:null,C1b:null,C2a:null,C2b:null,C3a:null,C3b:null},
   subject:null,
   subjectLog:[],
+  bg_gender:null, bg_studyHours:null, bg_sleep:null, bg_prepTime:null, bg_stress:null,
   studentName:'',studentClass:'',studentSeat:'',studentEmail:''
 };
 
@@ -585,57 +646,47 @@ function showScreen(id){
   window.scrollTo(0,0);
 }
 
-// ── 頁面載入：取名單 or 管理頁 ──────────────
+// ── 頁面載入：取施測班級 or 管理頁 ──────────
 window.addEventListener('load',()=>{
   if(window.location.hash==='#admin'){showScreen('s-admin');}
-  else{fetchStudents();}
+  else{fetchActiveClass();}
 });
 
-async function fetchStudents(){
+async function fetchActiveClass(){
   try{
-    const res=await fetch(SHEET_URL+'?action=getStudents');
-    _studentList=await res.json();
-    document.getElementById('welcome-loading').style.display='none';
-    document.getElementById('welcome-form').style.display='block';
-    document.getElementById('btn-start').style.display='block';
-    document.getElementById('welcome-note').style.display='block';
+    const res=await fetch(SHEET_URL+'?action=getActiveClass');
+    const data=await res.json();
+    if(data.activeClass){
+      document.getElementById('display-class').textContent=data.activeClass;
+      state._activeClass=data.activeClass;
+      document.getElementById('welcome-loading').style.display='none';
+      document.getElementById('welcome-form').style.display='block';
+      document.getElementById('btn-start').style.display='block';
+      document.getElementById('welcome-note').style.display='block';
+    }else{
+      document.getElementById('welcome-loading').textContent='今日尚未開放施測，請詢問老師';
+    }
   }catch(e){
-    document.getElementById('welcome-loading').textContent='名單載入失敗，請重新整理頁面';
+    document.getElementById('welcome-loading').textContent='連線失敗，請重新整理頁面';
   }
-}
-
-function onClassChange(){
-  const cls=document.getElementById('inp-class').value;
-  const nameEl=document.getElementById('inp-name');
-  nameEl.innerHTML='<option value="">請選擇姓名</option>';
-  document.getElementById('inp-seat').value='';
-  if(!cls){nameEl.disabled=true;return;}
-  const filtered=_studentList.filter(s=>s.class===cls);
-  filtered.forEach(s=>{
-    const opt=document.createElement('option');
-    opt.value=s.name; opt.dataset.seat=s.seat; opt.textContent=s.name+'（'+s.seat+'號）';
-    nameEl.appendChild(opt);
-  });
-  nameEl.disabled=false;
-}
-
-function onNameChange(){
-  const nameEl=document.getElementById('inp-name');
-  const sel=nameEl.options[nameEl.selectedIndex];
-  document.getElementById('inp-seat').value=sel?.dataset?.seat||'';
 }
 
 async function startAssessment(){
-  const cls  =document.getElementById('inp-class').value;
-  const name =document.getElementById('inp-name').value;
-  const seat =document.getElementById('inp-seat').value;
+  const cls  =state._activeClass||'';
+  const seat =document.getElementById('inp-seat').value.trim();
+  const name =document.getElementById('inp-name').value.trim();
   const email=document.getElementById('inp-email').value.trim();
   const err  =document.getElementById('form-error');
-  if(!cls||!name||!seat){
-    err.textContent='請選擇班級與姓名';err.style.display='block';return;
+  if(!seat||!name){
+    err.textContent='請填寫座號與姓名';err.style.display='block';return;
   }
   if(!email||!email.includes('@')){
     err.textContent='電子信箱為必填，請輸入有效 email';err.style.display='block';return;
+  }
+  if(!state.bg_gender){
+    err.textContent='請選擇性別';err.style.display='block';
+    document.getElementById('bg-gender')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
   }
   err.style.display='none';
   const btn=document.getElementById('btn-start');
@@ -666,15 +717,27 @@ function goNext(){
   document.querySelectorAll('.req-err').forEach(c=>c.classList.remove('req-err'));
   const errMsg=document.getElementById('page-err-msg');
   errMsg.style.display='none';
-  // 驗證每題必填
+  // 驗證每題必填（計分題）
   const unanswered=dim.items.map((_,i)=>i).filter(i=>state.scores[dim.id][i]===null);
-  if(unanswered.length>0){
-    errMsg.textContent=`還有 ${unanswered.length} 題尚未填答，請填完再繼續`;
+  // 驗證當前 step 的 C 題
+  const cItems=Object.entries(CONSISTENCY_ITEMS).filter(([,ci])=>ci.step===state.step);
+  const unansweredC=cItems.filter(([key])=>state.consistency[key]===null);
+  const totalMissing=unanswered.length+unansweredC.length;
+  if(totalMissing>0){
+    errMsg.textContent=`還有 ${totalMissing} 題尚未填答，請填完再繼續`;
     errMsg.style.display='block';
     unanswered.forEach(i=>{
       document.getElementById(`btns-${dim.id}-${i}`)?.closest('.slider-card')?.classList.add('req-err');
     });
-    document.getElementById(`btns-${dim.id}-${unanswered[0]}`)?.scrollIntoView({behavior:'smooth',block:'center'});
+    unansweredC.forEach(([key])=>{
+      document.getElementById(`btns-c-${key}`)?.closest('.slider-card')?.classList.add('req-err');
+    });
+    // 捲到第一題未填（計分題優先，否則 C 題）
+    const firstMissId=unanswered.length>0
+      ?`btns-${dim.id}-${unanswered[0]}`
+      :`btns-c-${unansweredC[0][0]}`;
+    document.getElementById(firstMissId)?.scrollIntoView({behavior:'smooth',block:'center'});
+    refreshButtonStyles(); // 確保已填題目視覺狀態不被清除
     return;
   }
   saveCurrentScores();
@@ -698,6 +761,12 @@ function btnColor(v){
   return colors[v];
 }
 
+function selectBg(field,val,el){
+  state['bg_'+field]=val;
+  document.getElementById('bg-'+field)?.querySelectorAll('.bg-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
 function setConsVal(key,val,el){
   state.consistency[key]=val;
   const container=el.closest('.scale-btns');
@@ -705,6 +774,8 @@ function setConsVal(key,val,el){
     btn.classList.toggle('active',i===val);
     btn.style.background=i===val?btnColor(i):'';
   });
+  el.closest('.slider-card')?.classList.remove('req-err');
+  updatePageProgress();
 }
 
 function setVal(dimId,itemIdx,val,el){
@@ -754,7 +825,7 @@ function renderDimScreen(){
     <div class="slider-card">
       <div class="slider-label">${ci.label}</div>
       <div class="slider-desc">${ci.desc}</div>
-      <div class="scale-btns">
+      <div class="scale-btns" id="btns-c-${key}">
         ${[0,1,2,3,4,5].map(v=>`<button class="scale-btn${state.consistency[key]!==null&&state.consistency[key]===v?' active':''}" style="${state.consistency[key]!==null&&state.consistency[key]===v?`background:${btnColor(v)}`:' '}" onclick="setConsVal('${key}',${v},this)">${v}</button>`).join('')}
       </div>
       <div class="scale-btn-labels"><span>完全沒有</span><span>非常符合</span></div>
@@ -1106,6 +1177,11 @@ async function submitData(){
     consDetail:rel.consDetails&&rel.consDetails.length?rel.consDetails.join('|'):'正常',
     subject:state.subject||'未選擇',
     subjectLog:state.subjectLog.join(','),
+    bgGender:state.bg_gender||'未填',
+    bgStudyHours:state.bg_studyHours||'未填',
+    bgSleep:state.bg_sleep||'未填',
+    bgPrepTime:state.bg_prepTime||'未填',
+    bgStress:state.bg_stress||'未填',
     // 9 向度完整資料（供 Email 使用）
     dimDetails:JSON.stringify(DIMENSIONS.map(d=>{
       const s=dimScore(d.id),lv=getLevel(s),c=DIM_CONTENT[d.id]?.[lv]||{};
@@ -1127,22 +1203,52 @@ function restart(){
   _emailSent=false;
   state.scores={memory:[null,null,null],focus:[null,null,null],understanding:[null,null,null],notes:[null,null,null],review:[null,null,null],timemanage:[null,null,null],motivation:[null,null,null],goals:[null,null,null],persistence:[null,null,null]};
   state.consistency={C1a:null,C1b:null,C2a:null,C2b:null,C3a:null,C3b:null};
-  state.subject=null;state.subjectLog=[];state.step=0;
+  state.subject=null;state.subjectLog=[];
+  state.bg_gender=null;state.bg_studyHours=null;state.bg_sleep=null;state.bg_prepTime=null;state.bg_stress=null;
+  state.step=0;
   state.studentName='';state.studentClass='';state.studentSeat='';state.studentEmail='';
   document.getElementById('inp-name').value='';
-  document.getElementById('inp-class').value='';
   document.getElementById('inp-seat').value='';
   document.getElementById('inp-email').value='';
   document.getElementById('form-error').style.display='none';
   showScreen('s-welcome');
 }
 
+// ── 重新套用已填按鈕樣式（防止驗證失敗後視覺被重置）──
+function refreshButtonStyles(){
+  const dim=DIMENSIONS[state.step];
+  if(!dim) return;
+  // 計分題
+  dim.items.forEach((_,i)=>{
+    const val=state.scores[dim.id][i];
+    const container=document.getElementById(`btns-${dim.id}-${i}`);
+    if(!container) return;
+    container.querySelectorAll('.scale-btn').forEach((btn,v)=>{
+      btn.classList.toggle('active',val!==null&&v===val);
+      btn.style.background=val!==null&&v===val?btnColor(v):'';
+    });
+  });
+  // C 題
+  Object.entries(CONSISTENCY_ITEMS).filter(([,ci])=>ci.step===state.step).forEach(([key])=>{
+    const val=state.consistency[key];
+    const container=document.getElementById(`btns-c-${key}`);
+    if(!container) return;
+    container.querySelectorAll('.scale-btn').forEach((btn,v)=>{
+      btn.classList.toggle('active',val!==null&&v===val);
+      btn.style.background=val!==null&&v===val?btnColor(v):'';
+    });
+  });
+}
+
 // ── 進度更新 ────────────────────────────────
 function updatePageProgress(){
   const dim=DIMENSIONS[state.step];
   if(!dim) return;
-  const answered=dim.items.filter((_,i)=>state.scores[dim.id][i]!==null).length;
-  const total=dim.items.length;
+  const cItems=Object.entries(CONSISTENCY_ITEMS).filter(([,ci])=>ci.step===state.step);
+  const answeredScores=dim.items.filter((_,i)=>state.scores[dim.id][i]!==null).length;
+  const answeredC=cItems.filter(([key])=>state.consistency[key]!==null).length;
+  const total=dim.items.length+cItems.length;
+  const answered=answeredScores+answeredC;
   const el=document.getElementById('page-progress');
   if(!el) return;
   el.textContent=`本頁 ${total} 題，已填 ${answered}/${total}`;
@@ -1254,11 +1360,36 @@ function adminLogin(){
         _adminPwd=pwd;
         document.getElementById('admin-login-area').style.display='none';
         document.getElementById('admin-panel').style.display='block';
+        // 顯示目前施測班級
+        fetch(SHEET_URL+'?action=getActiveClass')
+          .then(r=>r.json())
+          .then(d=>{
+            const el=document.getElementById('current-active-class');
+            el.textContent=d.activeClass?`目前開放施測：${d.activeClass}`:'目前：未開放施測';
+          }).catch(()=>{});
       }else{
         errEl.textContent='密碼錯誤';errEl.style.display='block';
       }
     })
     .catch(()=>{errEl.textContent='連線失敗，請稍後再試';errEl.style.display='block';});
+}
+
+function adminSetClass(){
+  const cls=document.getElementById('admin-active-cls').value;
+  const res=document.getElementById('admin-setclass-res');
+  fetch(SHEET_URL+'?action=setActiveClass&class='+encodeURIComponent(cls)+'&pwd='+encodeURIComponent(_adminPwd))
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.success){
+        res.textContent=cls?`已開放 ${cls} 施測`:'已關閉施測，學生無法進入';
+        res.className='admin-result ok';res.style.display='block';
+        document.getElementById('current-active-class').textContent=
+          cls?`目前開放施測：${cls}`:'目前：未開放施測';
+      }else{
+        res.textContent=data.msg;res.className='admin-result err';res.style.display='block';
+      }
+    })
+    .catch(()=>{res.textContent='連線失敗';res.className='admin-result err';res.style.display='block';});
 }
 
 function adminUnlock(){
