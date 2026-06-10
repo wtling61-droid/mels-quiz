@@ -38,8 +38,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .page-progress{font-size:12px;color:var(--muted);margin-left:8px}
 .page-progress.complete{color:var(--accent);font-weight:600}
 .page-err-msg{display:none;color:#ef4444;font-size:13px;text-align:center;padding:8px 12px;background:rgba(239,68,68,.08);border-radius:8px;margin:8px 16px 0}
-#s-admin{align-items:center;justify-content:center;padding:32px 20px;min-height:100vh;background:#0d1526}
-.admin-box{background:#1a2540;border:1.5px solid var(--accent);border-radius:var(--r);padding:28px;width:100%;max-width:480px}
+#s-admin{align-items:center!important;justify-content:flex-start!important;flex-direction:column!important;padding:40px 20px;min-height:100vh;background:#0d1526}
+.admin-box{background:#1a2540;border:1.5px solid var(--accent);border-radius:var(--r);padding:28px;width:100%;max-width:480px;flex-shrink:0}
 .admin-title{font-size:18px;font-weight:700;margin-bottom:18px;color:#fff}
 .admin-section{margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
 .admin-section h4{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--muted)}
@@ -271,19 +271,19 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="bg-group">
         <div class="bg-label">每天大約讀幾小時書？</div>
         <div class="bg-opts" id="bg-studyHours">
-          <button class="bg-btn" onclick="selectBg('studyHours','&lt;1h',this)">不到1小時</button>
+          <button class="bg-btn" onclick="selectBg('studyHours','lt1h',this)">不到1小時</button>
           <button class="bg-btn" onclick="selectBg('studyHours','1-2h',this)">1-2小時</button>
           <button class="bg-btn" onclick="selectBg('studyHours','2-3h',this)">2-3小時</button>
-          <button class="bg-btn" onclick="selectBg('studyHours','&gt;3h',this)">3小時以上</button>
+          <button class="bg-btn" onclick="selectBg('studyHours','gt3h',this)">3小時以上</button>
         </div>
       </div>
       <div class="bg-group">
         <div class="bg-label">平均每天睡幾小時？</div>
         <div class="bg-opts" id="bg-sleep">
-          <button class="bg-btn" onclick="selectBg('sleep','&lt;6h',this)">不到6小時</button>
+          <button class="bg-btn" onclick="selectBg('sleep','lt6h',this)">不到6小時</button>
           <button class="bg-btn" onclick="selectBg('sleep','6-7h',this)">6-7小時</button>
           <button class="bg-btn" onclick="selectBg('sleep','7-8h',this)">7-8小時</button>
-          <button class="bg-btn" onclick="selectBg('sleep','&gt;8h',this)">8小時以上</button>
+          <button class="bg-btn" onclick="selectBg('sleep','gt8h',this)">8小時以上</button>
         </div>
       </div>
       <div class="bg-group">
