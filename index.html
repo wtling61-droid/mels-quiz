@@ -57,7 +57,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .status-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
 .status-badge.done{background:rgba(0,196,167,.2);color:var(--accent)}
 .status-badge.pending{background:rgba(239,68,68,.15);color:#ef4444}
-.welcome-loading{padding:40px;text-align:center;color:var(--muted);font-size:14px}
+.admin-entry{text-align:center;margin-top:24px}
+.admin-entry button{background:none;border:none;color:var(--border);font-size:11px;cursor:pointer;padding:4px 8px;border-radius:4px;letter-spacing:.04em}
+.admin-entry button:hover{color:var(--muted)}
 .locked-class{padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;color:var(--accent);letter-spacing:.02em}
 .completed-notice{background:rgba(0,196,167,.1);border:1px solid rgba(0,196,167,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--accent);text-align:center;margin-bottom:16px}
 .bg-vars{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-top:10px}
@@ -306,6 +308,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
   <button class="btn-start" id="btn-start" onclick="startAssessment()" style="display:none">開始診斷 →</button>
   <div class="note" id="welcome-note" style="display:none">請根據實際情況誠實填寫，誠實作答才能得到最有用的建議</div>
+  <div class="admin-entry"><button onclick="showScreen('s-admin')">管理員入口</button></div>
 </div>
 
 <!-- DIM SCREENS -->
@@ -648,7 +651,9 @@ function showScreen(id){
 
 // ── 頁面載入：取施測班級 or 管理頁 ──────────
 window.addEventListener('load',()=>{
-  if(window.location.hash==='#admin'){showScreen('s-admin');}
+  const isAdmin = window.location.hash==='#admin' ||
+                  new URLSearchParams(window.location.search).has('admin');
+  if(isAdmin){showScreen('s-admin');}
   else{fetchActiveClass();}
 });
 
