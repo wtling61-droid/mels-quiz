@@ -620,6 +620,26 @@ async function startAssessment(){
     document.getElementById('bg-gender')?.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
+  if(!state.bg_studyHours){
+    err.textContent='請選擇每日讀書時數';err.style.display='block';
+    document.getElementById('bg-studyHours')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(!state.bg_sleep){
+    err.textContent='請選擇睡眠時數';err.style.display='block';
+    document.getElementById('bg-sleep')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(!state.bg_prepTime){
+    err.textContent='請選擇考前準備時間';err.style.display='block';
+    document.getElementById('bg-prepTime')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(!state.bg_stress){
+    err.textContent='請選擇學習壓力程度';err.style.display='block';
+    document.getElementById('bg-stress')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
   err.style.display='none';
   const btn=document.getElementById('btn-start');
   btn.disabled=true;btn.textContent='查詢中...';
@@ -1200,13 +1220,17 @@ function submitUpdateOnly(){
 
 // ── 唯讀結果頁（已完成學生回看）────────────
 function showReadonlyResults(d){
+  try{
   const dimMap={memory:'記憶力',focus:'專注力',understanding:'理解深度',
     notes:'筆記系統',review:'複習規劃',timemanage:'時間管理',
     motivation:'內在動機',goals:'目標設定',persistence:'持續力'};
   const dimIds=['memory','focus','understanding','notes','review','timemanage','motivation','goals','persistence'];
-  const scores={memory:d.memory,focus:d.focus,understanding:d.understanding,
-    notes:d.notes,review:d.review,timemanage:d.timemanage,
-    motivation:d.motivation,goals:d.goals,persistence:d.persistence};
+  // 強制轉數字（Sheets 回傳的可能是字串）
+  const scores={
+    memory:+d.memory||0, focus:+d.focus||0, understanding:+d.understanding||0,
+    notes:+d.notes||0, review:+d.review||0, timemanage:+d.timemanage||0,
+    motivation:+d.motivation||0, goals:+d.goals||0, persistence:+d.persistence||0
+  };
 
   const weakId=dimIds.reduce((a,b)=>scores[a]<=scores[b]?a:b);
   const weakScore=scores[weakId];
@@ -1257,6 +1281,11 @@ function showReadonlyResults(d){
   document.getElementById('results-inner').innerHTML=html;
   showScreen('s-results');
   if(d.subject && d.subject!=='未選擇') renderSubjectResultsReadonly(d.subject,scores);
+  }catch(e){
+    // 唯讀模式失敗，fallback 讓學生重新填答
+    console.error('showReadonlyResults error:',e);
+    state.step=0;renderDimScreen();showScreen('s-dims');
+  }
 }
 
 function renderSubjectResultsReadonly(sub,scores){
