@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MELS 管理員後台</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans TC',Arial,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px}
+  .box{background:#1e293b;border:2px solid #00c4a7;border-radius:16px;padding:28px;width:100%;max-width:500px}
+  h2{font-size:18px;font-weight:700;color:#fff;margin-bottom:20px;text-align:center}
+  h3{font-size:13px;font-weight:600;color:#94a3b8;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
+  input,select{width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;font-size:14px;margin-bottom:10px}
+  input:focus,select:focus{outline:none;border-color:#00c4a7}
+  .btn{padding:9px 16px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+  .btn-primary{background:#00c4a7;color:#fff;width:100%}
+  .btn-danger{background:#ef4444;color:#fff}
+  .row{display:flex;gap:8px;align-items:stretch}
+  .row select,.row input{margin-bottom:0;flex:1}
+  .msg{margin-top:10px;padding:8px 12px;border-radius:6px;font-size:13px;display:none}
+  .msg.ok{background:rgba(0,196,167,.15);color:#00c4a7}
+  .msg.err{background:rgba(239,68,68,.1);color:#f87171}
+  .section{background:#0f172a;border-radius:10px;padding:16px;margin-bottom:14px}
+  .status-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px;margin-bottom:3px;font-size:13px}
+  .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+  #login-panel,#main-panel{transition:all .2s}
+</style>
+</head>
+<body>
+<div class="box">
+  <div id="login-panel">
+    <h2>MELS 管理後台</h2>
+    <input type="password" id="pwd" placeholder="請輸入管理密碼" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn btn-primary" id="login-btn" onclick="login()">登入</button>
+    <div id="login-msg" class="msg err"></div>
+  </div>
+
+  <div id="main-panel" style="display:none">
+    <h2>測驗管理</h2>
+
+    <div class="section">
+      <h3>施測班級</h3>
+      <div id="current-class" style="color:#00c4a7;font-size:13px;margin-bottom:10px"></div>
+      <div class="row">
+        <select id="sel-class">
+          <option value="">關閉施測</option>
+          <option>高一忠</option><option>高一孝</option>
+          <option>高一仁</option><option>高一愛</option>
+        </select>
+        <button class="btn btn-primary" style="width:auto;white-space:nowrap" onclick="setClass()">套用</button>
+      </div>
+      <div id="class-msg" class="msg"></div>
+    </div>
+
+    <div class="section">
+      <h3>解鎖學生</h3>
+      <div class="row">
+        <select id="unlock-cls">
+          <option value="">選班級</option>
+          <option>高一忠</option><option>高一孝</option>
+          <option>高一仁</option><option>高一愛</option>
+        </select>
+        <input type="text" id="unlock-seat" placeholder="座號" style="width:80px;flex:none">
+        <button class="btn btn-danger" onclick="unlock()">解鎖</button>
+      </div>
+      <div id="unlock-msg" class="msg"></div>
+    </div>
+
+    <div class="section">
+      <h3>填答狀態</h3>
+      <select id="status-cls" onchange="loadStatus()">
+        <option value="">選班級查看</option>
+        <option>高一忠</option><option>高一孝</option>
+        <option>高一仁</option><option>高一愛</option>
+      </select>
+      <div id="status-list" style="margin-top:10px;max-height:300px;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const URL = 'https://script.google.com/macros/s/AKfycbwhx1YqrVxn6m2k55MudmY7GwTffUaJV0psa3HZgn7TgRmlgRM-lSthDZWms1XgQ4yt/exec';
+let PWD = '';
+
+function msg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = 'msg ' + type; el.style.display = 'block';
+}
+
+function api(params) {
+  return fetch(URL + '?' + new URLSearchParams({...params, pwd: PWD})).then(r => r.json());
+}
+
+function login() {
+  const pwd = document.getElementById('pwd').value;
+  if (!pwd) { msg('login-msg', '請輸入密碼', 'err'); return; }
+  const btn = document.getElementById('login-btn');
+  btn.textContent = '驗證中...'; btn.disabled = true;
+  fetch(URL + '?action=verifyPwd&pwd=' + encodeURIComponent(pwd))
+    .then(r => r.json())
+    .then(res => {
+      if (res.ok) {
+        PWD = pwd;
+        document.getElementById('login-panel').style.display = 'none';
+        document.getElementById('main-panel').style.display = 'block';
+        api({action:'getActiveClass'}).then(d => {
+          document.getElementById('current-class').textContent =
+            d.activeClass ? '目前開放：' + d.activeClass : '目前：未開放施測';
+        }).catch(()=>{});
+      } else {
+        msg('login-msg', '密碼錯誤', 'err');
+        btn.textContent = '登入'; btn.disabled = false;
+      }
+    })
+    .catch(() => {
+      msg('login-msg', '連線失敗，請確認 Apps Script 已部署', 'err');
+      btn.textContent = '登入'; btn.disabled = false;
+    });
+}
+
+function setClass() {
+  const cls = document.getElementById('sel-class').value;
+  api({action:'setActiveClass', class: cls})
+    .then(d => {
+      if (d.success) {
+        msg('class-msg', cls ? '已開放 ' + cls + ' 施測' : '已關閉施測', 'ok');
+        document.getElementById('current-class').textContent =
+          cls ? '目前開放：' + cls : '目前：未開放施測';
+      } else msg('class-msg', d.msg || '失敗', 'err');
+    }).catch(() => msg('class-msg', '連線失敗', 'err'));
+}
+
+function unlock() {
+  const cls = document.getElementById('unlock-cls').value;
+  const seat = document.getElementById('unlock-seat').value.trim();
+  if (!cls || !seat) { msg('unlock-msg', '請選班級並填座號', 'err'); return; }
+  api({action:'unlock', class: cls, seat: seat})
+    .then(d => {
+      const ok = d.success && d.deleted > 0;
+      msg('unlock-msg', ok ? '已解鎖 ' + cls + ' 座號 ' + seat : '查無此學生紀錄', ok ? 'ok' : 'err');
+    }).catch(() => msg('unlock-msg', '連線失敗', 'err'));
+}
+
+function loadStatus() {
+  const cls = document.getElementById('status-cls').value;
+  const el = document.getElementById('status-list');
+  if (!cls) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div style="color:#94a3b8;font-size:13px">載入中...</div>';
+  api({action:'getStatus', class: cls})
+    .then(list => {
+      if (list.success === false) { el.innerHTML = '<div style="color:#f87171;font-size:13px">' + list.msg + '</div>'; return; }
+      const done = list.filter(s => s.completed).length;
+      el.innerHTML = '<div style="font-size:12px;color:#94a3b8;margin-bottom:8px">共 ' + list.length + ' 人｜已填 ' + done + ' 人｜未填 ' + (list.length - done) + ' 人</div>'
+        + list.map(s => '<div class="status-item" style="background:' + (s.completed ? 'rgba(0,196,167,.08)' : 'rgba(239,68,68,.06)') + '">'
+          + '<span>' + s.seat + '號 ' + s.name + '</span>'
+          + '<span class="badge" style="' + (s.completed ? 'background:rgba(0,196,167,.2);color:#00c4a7' : 'background:rgba(239,68,68,.15);color:#f87171') + '">'
+          + (s.completed ? '已完成' : '未填答') + '</span></div>').join('');
+    }).catch(() => { el.innerHTML = '<div style="color:#f87171;font-size:13px">連線失敗</div>'; });
+}
+</script>
+</body>
+</html>
