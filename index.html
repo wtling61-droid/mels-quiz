@@ -656,7 +656,9 @@ async function startAssessment(){
       state.step=0;renderDimScreen();showScreen('s-dims');
     }
   }catch(e){
-    // API 失敗時仍允許作答
+    // API 失敗時仍允許作答，顯示錯誤供診斷
+    err.textContent='連線錯誤（仍可作答）：'+e.message;
+    err.style.display='block';
     state.studentName=name;state.studentClass=cls;
     state.studentSeat=seat;state.studentEmail=email;
     state.step=0;renderDimScreen();showScreen('s-dims');
@@ -750,6 +752,7 @@ const CAT_CLS={cognitive:'cat-cognitive',strategy:'cat-strategy',motivation:'cat
 const CAT_LBL={cognitive:'認知能力',strategy:'學習策略',motivation:'學習動機'};
 
 function renderDimScreen(){
+  try{
   const dim=DIMENSIONS[state.step];
   const pct=Math.round(((state.step+1)/9)*100);
   document.getElementById('step-text').textContent=`第 ${state.step+1} 步，共 9 步`;
@@ -782,6 +785,13 @@ function renderDimScreen(){
       </div>
       <div class="scale-btn-labels"><span>完全沒有</span><span>非常符合</span></div>
     </div>`).join('')}`;
+  }catch(err){
+    // 顯示可見的錯誤訊息，方便診斷
+    document.getElementById('dim-content').innerHTML=
+      `<div style="color:#f87171;background:rgba(239,68,68,.15);padding:20px;border-radius:12px;margin:20px;font-size:14px">
+        <b>渲染錯誤：</b>${err.message}<br><small>${err.stack||''}</small>
+      </div>`;
+  }
 }
 
 // ═══════════════════════════════════════
