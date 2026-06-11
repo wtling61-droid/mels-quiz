@@ -575,24 +575,29 @@ function showScreen(id){
   const target=document.getElementById(id);
   if(!target){
     document.body.insertAdjacentHTML('beforeend',
-      `<div style="position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:20px;padding:20px;z-index:9999">
-        錯誤：找不到 screen "${id}"
+      `<div style="position:fixed;top:0;left:0;right:0;background:#dc2626;color:#fff;font-size:18px;padding:16px;z-index:9999">
+        ❌ 找不到 screen: "${id}"
       </div>`);
     return;
   }
   target.classList.add('active');
   window.scrollTo(0,0);
-  if(id==='s-dims'){
-    setTimeout(()=>{
+  // ── 診斷橫幅 ──
+  setTimeout(()=>{
+    let info='';
+    if(id==='s-dims'){
       const dc=document.getElementById('dim-content');
-      if(!dc||!dc.innerHTML.trim()){
-        document.body.insertAdjacentHTML('beforeend',
-          `<div style="position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:20px;padding:20px;z-index:9999">
-            診斷：dim-content 是空的（renderDimScreen 未寫入）
-          </div>`);
-      }
-    },200);
-  }
+      info='dim-content innerHTML 長度：'+(dc?dc.innerHTML.length:'元素不存在');
+    }
+    if(id==='s-results'){
+      const ri=document.getElementById('results-inner');
+      info='results-inner innerHTML 長度：'+(ri?ri.innerHTML.length:'元素不存在');
+    }
+    document.body.insertAdjacentHTML('beforeend',
+      `<div style="position:fixed;top:0;left:0;right:0;background:#1d4ed8;color:#fff;font-size:16px;padding:14px;z-index:9999">
+        ✓ showScreen("${id}") 呼叫成功　${info}
+      </div>`);
+  },100);
 }
 
 // ── 頁面載入：取施測班級 or 管理頁 ──────────
