@@ -38,25 +38,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .page-progress{font-size:12px;color:var(--muted);margin-left:8px}
 .page-progress.complete{color:var(--accent);font-weight:600}
 .page-err-msg{display:none;color:#ef4444;font-size:13px;text-align:center;padding:8px 12px;background:rgba(239,68,68,.08);border-radius:8px;margin:8px 16px 0}
-#s-admin{align-items:center!important;justify-content:flex-start!important;flex-direction:column!important;padding:40px 20px;min-height:100vh;background:#0d1526}
-.admin-box{background:#1a2540;border:1.5px solid var(--accent);border-radius:var(--r);padding:28px;width:100%;max-width:480px;flex-shrink:0}
-.admin-title{font-size:18px;font-weight:700;margin-bottom:18px;color:#fff}
-.admin-section{margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
 .admin-section h4{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--muted)}
-.admin-row{display:flex;gap:8px;margin-bottom:10px;align-items:stretch}
-.admin-row select,.admin-row input{flex:1;padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px}
-.btn-admin{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;white-space:nowrap}
-.btn-admin.danger{background:#ef4444}
-.admin-result{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:6px;display:none}
-.admin-result.ok{background:rgba(0,196,167,.1);color:var(--accent)}
-.admin-result.err{background:rgba(239,68,68,.1);color:#ef4444}
-.status-list{margin-top:10px;max-height:300px;overflow-y:auto}
-.status-item{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:6px;font-size:13px;margin-bottom:3px}
-.status-item.done{background:rgba(0,196,167,.08);color:var(--text)}
-.status-item.pending{background:rgba(239,68,68,.06);color:var(--text)}
-.status-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
-.status-badge.done{background:rgba(0,196,167,.2);color:var(--accent)}
-.status-badge.pending{background:rgba(239,68,68,.15);color:#ef4444}
 .locked-class{padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;color:var(--accent);letter-spacing:.02em}
 .completed-notice{background:rgba(0,196,167,.1);border:1px solid rgba(0,196,167,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--accent);text-align:center;margin-bottom:16px}
 .bg-vars{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-top:10px}
@@ -306,7 +288,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <button class="btn-start" id="btn-start" onclick="startAssessment()" style="display:none">開始診斷 →</button>
   <div class="note" id="welcome-note" style="display:none">請根據實際情況誠實填寫，誠實作答才能得到最有用的建議</div>
   <div style="margin-top:28px">
-    <button onclick="showScreen('s-admin')" style="background:rgba(0,196,167,.12);border:1px solid rgba(0,196,167,.5);color:var(--accent);font-size:13px;font-weight:500;cursor:pointer;padding:7px 18px;border-radius:20px">管理員入口</button>
+    <button onclick="window.open('admin.html','_blank')" style="background:rgba(0,196,167,.12);border:1px solid rgba(0,196,167,.5);color:var(--accent);font-size:13px;font-weight:500;cursor:pointer;padding:7px 18px;border-radius:20px">管理員入口</button>
   </div>
 </div>
 
@@ -327,110 +309,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <div class="dim-nav">
     <button class="btn-nav btn-back-nav" id="btn-back" onclick="goBack()">← 上一步</button>
     <button class="btn-nav btn-next-nav" id="btn-next" onclick="goNext()">下一步 →</button>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div id="s-admin" class="screen">
-  <div id="admin-box-inner" style="background:#1e293b;border:2px solid #00c4a7;border-radius:16px;padding:28px;width:460px;max-width:calc(100vw - 40px);margin:40px auto">
-      <div id="admin-login-area">
-        <div style="font-size:14px;font-weight:600;color:#94a3b8;margin-bottom:16px;text-align:center;letter-spacing:.06em">管理員入口</div>
-        <input type="password" id="admin-pwd" placeholder="請輸入密碼"
-          style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #00c4a7;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;box-sizing:border-box">
-        <button id="admin-login-btn" onclick="adminLogin()"
-          style="width:100%;padding:10px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">登入</button>
-        <div id="admin-login-err" style="display:none;margin-top:10px;color:#f87171;font-size:13px;background:rgba(239,68,68,.1);padding:8px 12px;border-radius:6px;text-align:center"></div>
-      </div>
-      <div id="admin-panel" style="display:none">
-        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:16px">測驗管理</div>
-        <div style="margin-bottom:16px;padding:14px;background:#0f172a;border-radius:10px">
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px;font-weight:600">設定施測班級</div>
-          <div id="current-active-class" style="font-size:13px;color:#00c4a7;margin-bottom:8px"></div>
-          <div style="display:flex;gap:8px">
-            <select id="admin-active-cls" style="flex:1;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
-              <option value="">關閉施測</option>
-              <option>高一忠</option><option>高一孝</option>
-              <option>高一仁</option><option>高一愛</option>
-            </select>
-            <button onclick="adminSetClass()" style="padding:8px 14px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">套用</button>
-          </div>
-          <div id="admin-setclass-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
-        </div>
-        <div style="margin-bottom:16px;padding:14px;background:#0f172a;border-radius:10px">
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px;font-weight:600">解鎖學生</div>
-          <div style="display:flex;gap:8px">
-            <select id="admin-cls" style="flex:1;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
-              <option value="">選班級</option>
-              <option>高一忠</option><option>高一孝</option>
-              <option>高一仁</option><option>高一愛</option>
-            </select>
-            <input type="text" id="admin-seat" placeholder="座號"
-              style="width:70px;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
-            <button onclick="adminUnlock()" style="padding:8px 12px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">解鎖</button>
-          </div>
-          <div id="admin-unlock-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
-        </div>
-        <div style="padding:14px;background:#0f172a;border-radius:10px">
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px;font-weight:600">班級填答狀態</div>
-          <select id="admin-status-cls" onchange="adminLoadStatus()"
-            style="width:100%;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px;box-sizing:border-box">
-            <option value="">選班級查看</option>
-            <option>高一忠</option><option>高一孝</option>
-            <option>高一仁</option><option>高一愛</option>
-          </select>
-          <div id="admin-status-res" style="margin-top:10px;max-height:280px;overflow-y:auto"></div>
-        </div>
-      </div>
-  </div>
-</div>
-
-      <div id="admin-panel" style="display:none">
-        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:16px">測驗管理</div>
-
-        <!-- 設定施測班級 -->
-        <div style="margin-bottom:20px;padding:16px;background:#0f172a;border-radius:10px">
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:10px;font-weight:600">設定施測班級</div>
-          <div id="current-active-class" style="font-size:13px;color:#00c4a7;margin-bottom:10px"></div>
-          <div style="display:flex;gap:8px">
-            <select id="admin-active-cls" style="flex:1;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
-              <option value="">關閉施測（學生無法進入）</option>
-              <option>高一忠</option><option>高一孝</option>
-              <option>高一仁</option><option>高一愛</option>
-            </select>
-            <button onclick="adminSetClass()" style="padding:9px 16px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap">套用</button>
-          </div>
-          <div id="admin-setclass-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
-        </div>
-
-        <!-- 解鎖學生 -->
-        <div style="margin-bottom:20px;padding:16px;background:#0f172a;border-radius:10px">
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:10px;font-weight:600">解鎖學生</div>
-          <div style="display:flex;gap:8px">
-            <select id="admin-cls" style="flex:1;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
-              <option value="">選班級</option>
-              <option>高一忠</option><option>高一孝</option>
-              <option>高一仁</option><option>高一愛</option>
-            </select>
-            <input type="text" id="admin-seat" placeholder="座號"
-              style="width:80px;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
-            <button onclick="adminUnlock()" style="padding:9px 14px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">解鎖</button>
-          </div>
-          <div id="admin-unlock-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
-        </div>
-
-        <!-- 填答狀態 -->
-        <div style="padding:16px;background:#0f172a;border-radius:10px">
-          <div style="font-size:13px;color:#94a3b8;margin-bottom:10px;font-weight:600">班級填答狀態</div>
-          <select id="admin-status-cls" onchange="adminLoadStatus()"
-            style="width:100%;padding:9px 10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
-            <option value="">選班級查看</option>
-            <option>高一忠</option><option>高一孝</option>
-            <option>高一仁</option><option>高一愛</option>
-          </select>
-          <div id="admin-status-res" style="margin-top:10px;max-height:300px;overflow-y:auto"></div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
