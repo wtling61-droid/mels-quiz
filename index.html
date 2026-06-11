@@ -572,8 +572,27 @@ const state = {
 // ═══════════════════════════════════════
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target=document.getElementById(id);
+  if(!target){
+    document.body.insertAdjacentHTML('beforeend',
+      `<div style="position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:20px;padding:20px;z-index:9999">
+        錯誤：找不到 screen "${id}"
+      </div>`);
+    return;
+  }
+  target.classList.add('active');
   window.scrollTo(0,0);
+  if(id==='s-dims'){
+    setTimeout(()=>{
+      const dc=document.getElementById('dim-content');
+      if(!dc||!dc.innerHTML.trim()){
+        document.body.insertAdjacentHTML('beforeend',
+          `<div style="position:fixed;top:0;left:0;right:0;background:red;color:#fff;font-size:20px;padding:20px;z-index:9999">
+            診斷：dim-content 是空的（renderDimScreen 未寫入）
+          </div>`);
+      }
+    },200);
+  }
 }
 
 // ── 頁面載入：取施測班級 or 管理頁 ──────────
