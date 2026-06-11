@@ -333,8 +333,58 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <!-- ADMIN -->
 <div id="s-admin" class="screen">
-  <div style="min-height:100vh;background:#0f172a;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px">
-    <div style="background:#1e293b;border:2px solid #00c4a7;border-radius:16px;padding:28px;width:100%;max-width:480px">
+  <div id="admin-box-inner" style="background:#1e293b;border:2px solid #00c4a7;border-radius:16px;padding:28px;width:460px;max-width:calc(100vw - 40px);margin:40px auto">
+      <div id="admin-login-area">
+        <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:18px">管理員入口</div>
+        <label style="font-size:13px;color:#94a3b8;display:block;margin-bottom:6px">管理密碼</label>
+        <input type="password" id="admin-pwd" placeholder="請輸入密碼"
+          style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #00c4a7;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;box-sizing:border-box">
+        <button onclick="adminLogin()"
+          style="width:100%;padding:10px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">登入</button>
+        <div id="admin-login-err" style="display:none;margin-top:10px;color:#f87171;font-size:13px;background:rgba(239,68,68,.1);padding:8px 12px;border-radius:6px"></div>
+      </div>
+      <div id="admin-panel" style="display:none">
+        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:16px">測驗管理</div>
+        <div style="margin-bottom:16px;padding:14px;background:#0f172a;border-radius:10px">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px;font-weight:600">設定施測班級</div>
+          <div id="current-active-class" style="font-size:13px;color:#00c4a7;margin-bottom:8px"></div>
+          <div style="display:flex;gap:8px">
+            <select id="admin-active-cls" style="flex:1;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
+              <option value="">關閉施測</option>
+              <option>高一忠</option><option>高一孝</option>
+              <option>高一仁</option><option>高一愛</option>
+            </select>
+            <button onclick="adminSetClass()" style="padding:8px 14px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">套用</button>
+          </div>
+          <div id="admin-setclass-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
+        </div>
+        <div style="margin-bottom:16px;padding:14px;background:#0f172a;border-radius:10px">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px;font-weight:600">解鎖學生</div>
+          <div style="display:flex;gap:8px">
+            <select id="admin-cls" style="flex:1;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
+              <option value="">選班級</option>
+              <option>高一忠</option><option>高一孝</option>
+              <option>高一仁</option><option>高一愛</option>
+            </select>
+            <input type="text" id="admin-seat" placeholder="座號"
+              style="width:70px;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px">
+            <button onclick="adminUnlock()" style="padding:8px 12px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">解鎖</button>
+          </div>
+          <div id="admin-unlock-res" style="display:none;margin-top:8px;font-size:13px;padding:6px 10px;border-radius:6px"></div>
+        </div>
+        <div style="padding:14px;background:#0f172a;border-radius:10px">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px;font-weight:600">班級填答狀態</div>
+          <select id="admin-status-cls" onchange="adminLoadStatus()"
+            style="width:100%;padding:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px;box-sizing:border-box">
+            <option value="">選班級查看</option>
+            <option>高一忠</option><option>高一孝</option>
+            <option>高一仁</option><option>高一愛</option>
+          </select>
+          <div id="admin-status-res" style="margin-top:10px;max-height:280px;overflow-y:auto"></div>
+        </div>
+      </div>
+  </div>
+</div>
       <div id="admin-login-area">
         <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:18px">管理員入口</div>
         <label style="font-size:13px;color:#94a3b8;display:block;margin-bottom:6px">管理密碼</label>
