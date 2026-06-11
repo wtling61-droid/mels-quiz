@@ -57,9 +57,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .status-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
 .status-badge.done{background:rgba(0,196,167,.2);color:var(--accent)}
 .status-badge.pending{background:rgba(239,68,68,.15);color:#ef4444}
-.admin-corner{position:absolute;top:16px;right:16px}
-.admin-corner button{background:rgba(0,196,167,.12);border:1px solid rgba(0,196,167,.35);color:var(--accent);font-size:12px;cursor:pointer;padding:5px 13px;border-radius:16px;font-weight:500}
-.admin-corner button:hover{background:rgba(0,196,167,.22)}
 .locked-class{padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;color:var(--accent);letter-spacing:.02em}
 .completed-notice{background:rgba(0,196,167,.1);border:1px solid rgba(0,196,167,.3);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--accent);text-align:center;margin-bottom:16px}
 .bg-vars{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-top:10px}
@@ -224,7 +221,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <!-- WELCOME -->
 <div id="s-welcome" class="screen active" style="position:relative">
-  <div class="admin-corner"><button onclick="showScreen('s-admin')">管理員入口</button></div>
   <div class="logo-icon">🎯</div>
   <div class="title-main">學習策略診斷</div>
   <div class="title-sub">根據最近一次段考的學習過程進行評分<br>找出你最需要加強的地方</div>
@@ -335,13 +331,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div id="s-admin" class="screen">
   <div id="admin-box-inner" style="background:#1e293b;border:2px solid #00c4a7;border-radius:16px;padding:28px;width:460px;max-width:calc(100vw - 40px);margin:40px auto">
       <div id="admin-login-area">
-        <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:18px">管理員入口</div>
-        <label style="font-size:13px;color:#94a3b8;display:block;margin-bottom:6px">管理密碼</label>
+        <div style="font-size:14px;font-weight:600;color:#94a3b8;margin-bottom:16px;text-align:center;letter-spacing:.06em">管理員入口</div>
         <input type="password" id="admin-pwd" placeholder="請輸入密碼"
           style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #00c4a7;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;box-sizing:border-box">
-        <button onclick="adminLogin()"
+        <button id="admin-login-btn" onclick="adminLogin()"
           style="width:100%;padding:10px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">登入</button>
-        <div id="admin-login-err" style="display:none;margin-top:10px;color:#f87171;font-size:13px;background:rgba(239,68,68,.1);padding:8px 12px;border-radius:6px"></div>
+        <div id="admin-login-err" style="display:none;margin-top:10px;color:#f87171;font-size:13px;background:rgba(239,68,68,.1);padding:8px 12px;border-radius:6px;text-align:center"></div>
       </div>
       <div id="admin-panel" style="display:none">
         <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:16px">測驗管理</div>
@@ -385,15 +380,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       </div>
   </div>
 </div>
-      <div id="admin-login-area">
-        <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:18px">管理員入口</div>
-        <label style="font-size:13px;color:#94a3b8;display:block;margin-bottom:6px">管理密碼</label>
-        <input type="password" id="admin-pwd" placeholder="請輸入密碼"
-          style="width:100%;padding:10px 12px;background:#0f172a;border:1px solid #00c4a7;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px">
-        <button onclick="adminLogin()"
-          style="width:100%;padding:10px;background:#00c4a7;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">登入</button>
-        <div id="admin-login-err" style="display:none;margin-top:10px;color:#f87171;font-size:13px;background:rgba(239,68,68,.1);padding:8px 12px;border-radius:6px"></div>
-      </div>
+
       <div id="admin-panel" style="display:none">
         <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:16px">測驗管理</div>
 
@@ -1417,6 +1404,10 @@ let _adminPwd='';
 function adminLogin(){
   const pwd=document.getElementById('admin-pwd').value;
   const errEl=document.getElementById('admin-login-err');
+  const btn=document.getElementById('admin-login-btn');
+  if(!pwd){errEl.textContent='請輸入密碼';errEl.style.display='block';return;}
+  btn.textContent='驗證中...';btn.disabled=true;
+  errEl.style.display='none';
   fetch(SHEET_URL+'?action=verifyPwd&pwd='+encodeURIComponent(pwd))
     .then(r=>r.json())
     .then(res=>{
@@ -1431,11 +1422,15 @@ function adminLogin(){
             el.textContent=d.activeClass?`目前開放：${d.activeClass}`:'目前：未開放施測';
           }).catch(()=>{});
       }else{
-        const errEl=document.getElementById('admin-login-err');
         errEl.textContent='密碼錯誤';errEl.style.display='block';
+        btn.textContent='登入';btn.disabled=false;
       }
     })
-    .catch(()=>{errEl.textContent='連線失敗，請稍後再試';errEl.style.display='block';});
+    .catch(()=>{
+      errEl.textContent='連線失敗，請確認 Apps Script 已部署 v5.2';
+      errEl.style.display='block';
+      btn.textContent='登入';btn.disabled=false;
+    });
 }
 
 function adminSetClass(){
