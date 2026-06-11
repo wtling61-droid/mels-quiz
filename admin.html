@@ -12,14 +12,14 @@ h2{font-size:18px;font-weight:700;color:#fff;margin-bottom:20px;text-align:cente
 h3{font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:uppercase}
 input,select{display:block;width:100%;padding:9px 12px;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;font-size:14px;margin-bottom:10px}
 .btn{padding:9px 16px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;color:#fff}
-.g{background:#00c4a7}
-.r{background:#ef4444}
+.g{background:#00c4a7}.r{background:#ef4444}.y{background:#f59e0b}
 .row{display:flex;gap:8px;margin-bottom:10px}
 .row select,.row input{margin-bottom:0;flex:1}
 .msg{margin-top:8px;padding:8px 12px;border-radius:6px;font-size:13px;display:none}
 .ok{background:rgba(0,196,167,.2);color:#00c4a7}
 .err{background:rgba(239,68,68,.15);color:#f87171}
 .sec{background:#0f172a;border-radius:10px;padding:14px;margin-bottom:14px}
+.pwd-ok{font-size:12px;color:#00c4a7;margin-top:4px}
 </style>
 </head>
 <body>
@@ -27,8 +27,17 @@ input,select{display:block;width:100%;padding:9px 12px;background:#0f172a;border
   <h2>MELS 管理後台</h2>
 
   <div class="sec">
+    <h3>管理密碼</h3>
+    <div class="row">
+      <input type="password" id="pwd-input" placeholder="輸入 Apps Script 設定的密碼" onkeydown="if(event.key==='Enter')setPwd()">
+      <button class="btn y" onclick="setPwd()" style="white-space:nowrap">確認</button>
+    </div>
+    <div id="pwd-status" style="font-size:12px;color:#94a3b8">尚未輸入密碼</div>
+  </div>
+
+  <div class="sec">
     <h3>施測班級</h3>
-    <div id="cur" style="color:#00c4a7;font-size:13px;margin-bottom:8px">載入中...</div>
+    <div id="cur" style="color:#00c4a7;font-size:13px;margin-bottom:8px">—</div>
     <div class="row">
       <select id="s1">
         <option value="">關閉施測</option>
@@ -66,43 +75,76 @@ input,select{display:block;width:100%;padding:9px 12px;background:#0f172a;border
 </div>
 
 <script>
-const PWD = 'fjsh2281001';
-const URL = 'https://script.google.com/macros/s/AKfycbwhx1YqrVxn6m2k55MudmY7GwTffUaJV0psa3HZgn7TgRmlgRM-lSthDZWms1XgQ4yt/exec';
+const AS = 'https://script.google.com/macros/s/AKfycbwhx1YqrVxn6m2k55MudmY7GwTffUaJV0psa3HZgn7TgRmlgRM-lSthDZWms1XgQ4yt/exec';
+let PWD = sessionStorage.getItem('mels_pwd') || '';
 
-function api(p){return fetch(URL+'?'+new URLSearchParams({...p,pwd:PWD})).then(r=>r.json());}
-function msg(id,t,cls){const e=document.getElementById(id);e.textContent=t;e.className='msg '+cls;e.style.display='block';}
+// 初始化：若 sessionStorage 有密碼則帶入
+window.onload = () => {
+  if (PWD) {
+    document.getElementById('pwd-input').value = PWD;
+    document.getElementById('pwd-status').textContent = '密碼已載入（' + PWD.length + ' 位）';
+    document.getElementById('pwd-status').style.color = '#00c4a7';
+    loadCur();
+  }
+};
 
-// 載入目前施測班級
-api({action:'getActiveClass'})
-  .then(d=>document.getElementById('cur').textContent=d.activeClass?'目前開放：'+d.activeClass:'目前：未開放施測')
-  .catch(()=>document.getElementById('cur').textContent='連線失敗');
-
-function setClass(){
-  const c=document.getElementById('s1').value;
-  api({action:'setActiveClass',class:c})
-    .then(d=>msg('m1',d.success?(c?'已開放 '+c+' 施測':'已關閉施測'):(d.msg||'失敗'),d.success?'ok':'err'))
-    .catch(()=>msg('m1','連線失敗','err'));
+function setPwd() {
+  PWD = document.getElementById('pwd-input').value.trim();
+  sessionStorage.setItem('mels_pwd', PWD);
+  document.getElementById('pwd-status').textContent = PWD ? '密碼已設定（' + PWD.length + ' 位），可進行操作' : '尚未輸入密碼';
+  document.getElementById('pwd-status').style.color = PWD ? '#00c4a7' : '#94a3b8';
+  if (PWD) loadCur();
 }
 
-function unlock(){
-  const c=document.getElementById('s2').value,s=document.getElementById('seat').value.trim();
-  if(!c||!s){msg('m2','請選班級並填座號','err');return;}
-  api({action:'unlock',class:c,seat:s})
-    .then(d=>msg('m2',d.deleted>0?'已解鎖 '+c+' 座號 '+s:'查無此學生紀錄',d.deleted>0?'ok':'err'))
-    .catch(()=>msg('m2','連線失敗','err'));
+function api(p) {
+  return fetch(AS + '?' + new URLSearchParams({...p, pwd: PWD})).then(r => r.json());
+}
+function show(id, t, cls) {
+  const e = document.getElementById(id);
+  e.textContent = t; e.className = 'msg ' + cls; e.style.display = 'block';
 }
 
-function loadStatus(){
-  const c=document.getElementById('s3').value,el=document.getElementById('sl');
-  if(!c){el.innerHTML='';return;}
-  el.innerHTML='<div style="color:#94a3b8;font-size:13px">載入中...</div>';
-  api({action:'getStatus',class:c})
-    .then(list=>{
-      if(!Array.isArray(list)){el.innerHTML='<div style="color:#f87171;font-size:13px">'+(list.msg||'失敗')+'</div>';return;}
-      const done=list.filter(s=>s.completed).length;
-      el.innerHTML='<div style="font-size:12px;color:#94a3b8;margin-bottom:8px">共 '+list.length+' 人｜已填 '+done+'｜未填 '+(list.length-done)+'</div>'
-        +list.map(s=>'<div style="display:flex;justify-content:space-between;padding:5px 8px;border-radius:5px;margin-bottom:2px;font-size:13px;background:'+(s.completed?'rgba(0,196,167,.08)':'rgba(239,68,68,.06)')+'"><span>'+s.seat+'號 '+s.name+'</span><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;'+(s.completed?'background:rgba(0,196,167,.2);color:#00c4a7':'background:rgba(239,68,68,.15);color:#f87171')+'">'+(s.completed?'已完成':'未填答')+'</span></div>').join('');
-    }).catch(()=>{el.innerHTML='<div style="color:#f87171;font-size:13px">連線失敗</div>';});
+function loadCur() {
+  api({action:'getActiveClass'})
+    .then(d => document.getElementById('cur').textContent = d.activeClass ? '目前開放：' + d.activeClass : '目前：未開放施測')
+    .catch(() => document.getElementById('cur').textContent = '連線失敗');
+}
+
+function setClass() {
+  if (!PWD) { show('m1', '請先輸入密碼', 'err'); return; }
+  const c = document.getElementById('s1').value;
+  api({action:'setActiveClass', class: c})
+    .then(d => {
+      if (d.success) {
+        show('m1', c ? '已開放 ' + c + ' 施測' : '已關閉施測', 'ok');
+        document.getElementById('cur').textContent = c ? '目前開放：' + c : '目前：未開放施測';
+      } else {
+        show('m1', d.msg || '失敗', 'err');
+      }
+    })
+    .catch(() => show('m1', '連線失敗', 'err'));
+}
+
+function unlock() {
+  if (!PWD) { show('m2', '請先輸入密碼', 'err'); return; }
+  const c = document.getElementById('s2').value, s = document.getElementById('seat').value.trim();
+  if (!c || !s) { show('m2', '請選班級並填座號', 'err'); return; }
+  api({action:'unlock', class: c, seat: s})
+    .then(d => show('m2', d.deleted > 0 ? '已解鎖 ' + c + ' 座號 ' + s : '查無此學生紀錄', d.deleted > 0 ? 'ok' : 'err'))
+    .catch(() => show('m2', '連線失敗', 'err'));
+}
+
+function loadStatus() {
+  const c = document.getElementById('s3').value, el = document.getElementById('sl');
+  if (!c) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div style="color:#94a3b8;font-size:13px">載入中...</div>';
+  api({action:'getStatus', class: c})
+    .then(list => {
+      if (!Array.isArray(list)) { el.innerHTML = '<div style="color:#f87171;font-size:13px">' + (list.msg || '失敗') + '</div>'; return; }
+      const done = list.filter(s => s.completed).length;
+      el.innerHTML = '<div style="font-size:12px;color:#94a3b8;margin-bottom:8px">共 ' + list.length + ' 人｜已填 ' + done + '｜未填 ' + (list.length - done) + '</div>'
+        + list.map(s => '<div style="display:flex;justify-content:space-between;padding:5px 8px;border-radius:5px;margin-bottom:2px;font-size:13px;background:' + (s.completed ? 'rgba(0,196,167,.08)' : 'rgba(239,68,68,.06)') + '"><span>' + s.seat + '號 ' + s.name + '</span><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;' + (s.completed ? 'background:rgba(0,196,167,.2);color:#00c4a7' : 'background:rgba(239,68,68,.15);color:#f87171') + '">' + (s.completed ? '已完成' : '未填答') + '</span></div>').join('');
+    }).catch(() => { el.innerHTML = '<div style="color:#f87171;font-size:13px">連線失敗</div>'; });
 }
 </script>
 </body>
