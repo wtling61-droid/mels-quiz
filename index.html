@@ -54,8 +54,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
 
 /* DIM SCREENS */
-#s-dims{padding:0;flex-direction:column;height:100vh}
-.dim-header{padding:16px 20px 0;position:sticky;top:0;background:var(--bg);z-index:10;padding-bottom:14px}
+#s-dims{padding:0;display:block;height:100vh;overflow-y:auto}
+.dim-header{padding:16px 20px 14px;position:sticky;top:0;background:var(--bg);z-index:10}
 .progress-bar-wrap{height:4px;background:var(--border);border-radius:4px;margin-bottom:12px}
 .progress-bar-fill{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .4s ease}
 .step-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -65,7 +65,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .cat-strategy{background:#1a3a2a;color:#4ade80}
 .cat-motivation{background:#3a1a2a;color:#f472b6}
 
-.dim-content{flex:1;padding:0 20px 20px;overflow-y:auto;min-height:0}
+.dim-content{padding:0 20px 20px}
 .dim-hero{display:flex;align-items:center;gap:14px;margin-bottom:22px}
 .dim-icon{font-size:38px}
 .dim-name{font-family:'Outfit',sans-serif;font-size:24px;font-weight:800}
